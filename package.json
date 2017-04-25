@@ -1,0 +1,6 @@
+{
+  "name": "json-proxy",
+  "dependencies": {
+    "request": "latest"
+  }
+}
