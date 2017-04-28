@@ -1,11 +1,12 @@
 const http = require('http');
 const request = require('request');
 const qs = require('querystring');
-
-const HOST = 'https://graph.facebook.com';//TODO needs to be taken from the configuration
+const fs = require('fs');
 
 http.createServer((req, res) => {
   console.log('Serving: ' + req.method + ' ' + req.url);
+
+  const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
   let requestBody = '';
 
@@ -17,11 +18,11 @@ http.createServer((req, res) => {
     let parsedRequest = qs.parse(requestBody);//TODO logic to adjust the requests
 
     const headers = JSON.parse(JSON.stringify(req.headers));
-    headers.host = HOST.replace('https://', '');
+    headers.host = configuration.endpoint.replace('https://', '');
     delete headers['accept-encoding'];
 
     const options = {
-      url: HOST + req.url,
+      url: configuration.endpoint + req.url,
       method: req.method,
       headers: headers,
       body: requestBody,
