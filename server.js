@@ -1,6 +1,5 @@
 const http = require('http');
 const request = require('request');
-const qs = require('querystring');
 const fs = require('fs');
 
 http.createServer((req, res) => {
@@ -23,7 +22,8 @@ http.createServer((req, res) => {
       return rule.adjust === 'RQ';
     });
 
-    let parsedRequest = qs.parse(requestBody);//TODO logic to adjust the requests
+    requestBody = requestBody ? JSON.parse(requestBody) : requestBody;
+    //TODO logic to adjust the requestBody
 
     const headers = JSON.parse(JSON.stringify(req.headers));
     headers.host = configuration.endpoint.replace('https://', '');
@@ -33,7 +33,7 @@ http.createServer((req, res) => {
       url: configuration.endpoint + req.url,
       method: req.method,
       headers: headers,
-      body: requestBody,
+      body: requestBody ? JSON.stringify(requestBody) : requestBody,
     };
 
     request(options, (error, response) => {
@@ -46,7 +46,7 @@ http.createServer((req, res) => {
         console.log(error);
       }
 
-      let responseBody = JSON.parse(response.body);
+      let responseBody = response.body ? JSON.parse(response.body) : response.body;
 
       adjustingRSRules.some((rule) => {
         if (rule.replaceWith) {
@@ -65,12 +65,13 @@ http.createServer((req, res) => {
         })
       });
 
-      responseBody = JSON.stringify(responseBody);
+      responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
       const headers = JSON.parse(JSON.stringify(response.headers));
       if (headers['set-cookie']) {
         headers['set-cookie'] = headers['set-cookie'].map((cookie) => cookie.replace('Secure; HttpOnly', ''));
       }
-      headers['content-length'] = responseBody.length;
+      delete headers['content-length'];
+
       res.writeHead(response.statusCode, headers);
       res.write(responseBody);
       res.end();
