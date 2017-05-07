@@ -7,7 +7,7 @@ http.createServer((req, res) => {
 
   const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
   const rules = (configuration.rules || []).filter((rule) => {
-    return rule.enabled && req.url.match(rule.url);
+    return rule.enabled && req.method === rule.method && req.url.match(rule.url);
   });
 
   let requestBody = '';
@@ -55,12 +55,20 @@ http.createServer((req, res) => {
           return true;
         }
         rule.rules.forEach((rule) => {
-          if (eval(rule.condition)) {
-            console.log('Condition "' + rule.condition + '" valid');
-            rule.actions.forEach((action) => {
-              console.log('Applying rule: ' + action);
-              eval(action);
-            });
+          try {
+            if (eval(rule.condition)) {
+              console.log('Condition "' + rule.condition + '" valid');
+              rule.actions.forEach((action) => {
+                console.log('Applying rule: ' + action);
+                try {
+                  eval(action);
+                } catch (e) {
+                  console.log('invalid rule');
+                }
+              });
+            }
+          } catch (e) {
+            console.log('invalid condition: "' + rule.condition + '"');
           }
         })
       });
