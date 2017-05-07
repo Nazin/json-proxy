@@ -45,11 +45,7 @@ http.createServer((req, res) => {
       if (error) {
         console.log(error);
       }
-      const headers = JSON.parse(JSON.stringify(response.headers));
-      if (headers['set-cookie']) {
-        headers['set-cookie'] = headers['set-cookie'].map((cookie) => cookie.replace('Secure; HttpOnly', ''));
-      }
-      res.writeHead(response.statusCode, headers);
+
       let responseBody = JSON.parse(response.body);
 
       adjustingRSRules.some((rule) => {
@@ -60,7 +56,14 @@ http.createServer((req, res) => {
         }
       });
 
-      res.write(JSON.stringify(responseBody));
+      responseBody = JSON.stringify(responseBody);
+      const headers = JSON.parse(JSON.stringify(response.headers));
+      if (headers['set-cookie']) {
+        headers['set-cookie'] = headers['set-cookie'].map((cookie) => cookie.replace('Secure; HttpOnly', ''));
+      }
+      headers['content-length'] = responseBody.length;
+      res.writeHead(response.statusCode, headers);
+      res.write(responseBody);
       res.end();
     });
   });
