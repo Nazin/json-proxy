@@ -22,9 +22,17 @@ http.createServer((req, res) => {
       return rule.adjust === 'RQ';
     });
 
-    requestBody = requestBody ? JSON.parse(requestBody) : requestBody;
-    let tmp = adjustBody(requestBody, undefined, adjustingRQRules);
-    requestBody = tmp[0];
+    let newRequestBody;
+
+    try {
+      newRequestBody = requestBody ? JSON.parse(requestBody) : requestBody;
+      let tmp = adjustBody(newRequestBody, undefined, adjustingRQRules);
+      newRequestBody = tmp[0];
+      newRequestBody = newRequestBody ? JSON.stringify(newRequestBody) : newRequestBody
+    } catch (e) {
+      console.log('Problem with adjusting the request');
+      newRequestBody = requestBody;
+    }
 
     const headers = JSON.parse(JSON.stringify(req.headers));
     headers.host = configuration.endpoint.replace('https://', '');
@@ -34,7 +42,7 @@ http.createServer((req, res) => {
       url: configuration.endpoint + req.url,
       method: req.method,
       headers: headers,
-      body: requestBody ? JSON.stringify(requestBody) : requestBody,
+      body: newRequestBody,
     };
 
     request(options, (error, response) => {
@@ -47,10 +55,17 @@ http.createServer((req, res) => {
         console.log(error);
       }
 
-      let responseBody = response.body ? JSON.parse(response.body) : response.body;
-      let tmp = adjustBody(requestBody, responseBody, adjustingRSRules);
-      responseBody = tmp[1];
-      responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
+      let responseBody;
+
+      try {
+        responseBody = response.body ? JSON.parse(response.body) : response.body;
+        let tmp = adjustBody(requestBody, responseBody, adjustingRSRules);
+        responseBody = tmp[1];
+        responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
+      } catch (e) {
+        console.log('Problem with adjusting the response');
+        responseBody = response.body;
+      }
 
       const headers = JSON.parse(JSON.stringify(response.headers));
       if (headers['set-cookie']) {
