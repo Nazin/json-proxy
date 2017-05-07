@@ -23,7 +23,8 @@ http.createServer((req, res) => {
     });
 
     requestBody = requestBody ? JSON.parse(requestBody) : requestBody;
-    //TODO logic to adjust the requestBody
+    let tmp = adjustBody(requestBody, undefined, adjustingRQRules);
+    requestBody = tmp[0];
 
     const headers = JSON.parse(JSON.stringify(req.headers));
     headers.host = configuration.endpoint.replace('https://', '');
@@ -47,33 +48,10 @@ http.createServer((req, res) => {
       }
 
       let responseBody = response.body ? JSON.parse(response.body) : response.body;
-
-      adjustingRSRules.some((rule) => {
-        if (rule.replaceWith) {
-          console.log('Replacing entire RS');
-          responseBody = rule.replaceWith;
-          return true;
-        }
-        rule.rules.forEach((rule) => {
-          try {
-            if (eval(rule.condition)) {
-              console.log('Condition "' + rule.condition + '" valid');
-              rule.actions.forEach((action) => {
-                console.log('Applying rule: ' + action);
-                try {
-                  eval(action);
-                } catch (e) {
-                  console.log('invalid rule');
-                }
-              });
-            }
-          } catch (e) {
-            console.log('invalid condition: "' + rule.condition + '"');
-          }
-        })
-      });
-
+      let tmp = adjustBody(requestBody, responseBody, adjustingRSRules);
+      responseBody = tmp[1];
       responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
+
       const headers = JSON.parse(JSON.stringify(response.headers));
       if (headers['set-cookie']) {
         headers['set-cookie'] = headers['set-cookie'].map((cookie) => cookie.replace('Secure; HttpOnly', ''));
@@ -90,3 +68,26 @@ http.createServer((req, res) => {
     console.log(error);
   }
 });
+
+function adjustBody(requestBody, responseBody, rules) {
+  rules.forEach((rule) => {
+    rule.rules.forEach((rule) => {
+      try {
+        if (eval(rule.condition)) {
+          console.log('Condition "' + rule.condition + '" valid');
+          rule.actions.forEach((action) => {
+            console.log('Applying rule: ' + action);
+            try {
+              eval(action);
+            } catch (e) {
+              console.log('invalid rule');
+            }
+          });
+        }
+      } catch (e) {
+        console.log('invalid condition: "' + rule.condition + '"');
+      }
+    })
+  });
+  return [requestBody, responseBody];
+}
