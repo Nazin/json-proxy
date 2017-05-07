@@ -7,6 +7,9 @@ http.createServer((req, res) => {
   console.log('Serving: ' + req.method + ' ' + req.url);
 
   const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+  const rules = (configuration.rules || []).filter((rule) => {
+    return rule.enabled && req.url.match(rule.url);
+  });
 
   let requestBody = '';
 
@@ -15,6 +18,11 @@ http.createServer((req, res) => {
   });
 
   req.on('end', () => {
+
+    const adjustingRQRules = rules.filter((rule) => {
+      return rule.adjust === 'RQ';
+    });
+
     let parsedRequest = qs.parse(requestBody);//TODO logic to adjust the requests
 
     const headers = JSON.parse(JSON.stringify(req.headers));
@@ -29,6 +37,11 @@ http.createServer((req, res) => {
     };
 
     request(options, (error, response) => {
+
+      const adjustingRSRules = rules.filter((rule) => {
+        return rule.adjust === 'RS';
+      });
+
       if (error) {
         console.log(error);
       }
@@ -37,7 +50,17 @@ http.createServer((req, res) => {
         headers['set-cookie'] = headers['set-cookie'].map((cookie) => cookie.replace('Secure; HttpOnly', ''));
       }
       res.writeHead(response.statusCode, headers);
-      res.write(response.body);//TODO logic to adjust response
+      let responseBody = JSON.parse(response.body);
+
+      adjustingRSRules.some((rule) => {
+        if (rule.replaceWith) {
+          console.log('Replacing entire RS');
+          responseBody = rule.replaceWith;
+          return true;
+        }
+      });
+
+      res.write(JSON.stringify(responseBody));
       res.end();
     });
   });
