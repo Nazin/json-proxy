@@ -54,6 +54,15 @@ http.createServer((req, res) => {
           responseBody = rule.replaceWith;
           return true;
         }
+        rule.rules.forEach((rule) => {
+          if (eval(rule.condition)) {
+            console.log('Condition "' + rule.condition + '" valid');
+            rule.actions.forEach((action) => {
+              console.log('Applying rule: ' + action);
+              eval(action);
+            });
+          }
+        })
       });
 
       responseBody = JSON.stringify(responseBody);

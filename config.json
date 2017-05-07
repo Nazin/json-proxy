@@ -7,6 +7,22 @@
       "method": "GET",
       "adjust": "RS",
       "replaceWith": {"name": "Test", "id": "123456789", "birthday": "01/02/2000", "email": "test@example.com"}
+    },
+    {
+      "enabled": true,
+      "url": "/[^/]+/feed",
+      "method": "GET",
+      "adjust": "RS",
+      "rules": [
+        {
+          "condition": "responseBody.data.length === 1",
+          "actions": [
+            "responseBody.data[0].message = 'test message'",
+            "delete responseBody.data[0].created_time",
+            "responseBody.data[0].test = {\"field1\": 12, \"field2\": 23}"
+          ]
+        }
+      ]
     }
   ]
 }
