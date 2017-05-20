@@ -56,11 +56,13 @@ http.createServer((req, res) => {
       }
 
       let responseBody;
+      let responseStatusCode = response.statusCode;
 
       try {
         responseBody = response.body ? JSON.parse(response.body) : response.body;
-        let tmp = adjustBody(requestBody ? JSON.parse(requestBody) : requestBody, responseBody, adjustingRSRules);
+        let tmp = adjustBody(requestBody ? JSON.parse(requestBody) : requestBody, responseBody, adjustingRSRules, responseStatusCode);
         responseBody = tmp[1];
+        responseStatusCode = tmp[2];
         responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
       } catch (e) {
         console.log('Problem with adjusting the response');
@@ -73,7 +75,7 @@ http.createServer((req, res) => {
       }
       delete headers['content-length'];
 
-      res.writeHead(response.statusCode, headers);
+      res.writeHead(responseStatusCode, headers);
       res.write(responseBody);
       res.end();
     });
@@ -84,7 +86,7 @@ http.createServer((req, res) => {
   }
 });
 
-function adjustBody(requestBody, responseBody, rules) {
+function adjustBody(requestBody, responseBody, rules, responseStatusCode) {
   rules.forEach((rule) => {
     rule.rules.forEach((rule) => {
       try {
@@ -104,5 +106,5 @@ function adjustBody(requestBody, responseBody, rules) {
       }
     })
   });
-  return [requestBody, responseBody];
+  return [requestBody, responseBody, responseStatusCode];
 }

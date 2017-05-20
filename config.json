@@ -17,6 +17,21 @@
     },
     {
       "enabled": true,
+      "url": "/me2",
+      "method": "GET",
+      "adjust": "RS",
+      "rules": [
+        {
+          "condition": "true",
+          "actions": [
+            "responseBody = {\"status\": \"Error\"}",
+            "responseStatusCode = 500"
+          ]
+        }
+      ]
+    },
+    {
+      "enabled": true,
       "url": "/[^/]+/feed",
       "method": "GET",
       "adjust": "RS",
