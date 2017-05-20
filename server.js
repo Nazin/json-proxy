@@ -59,7 +59,7 @@ http.createServer((req, res) => {
 
       try {
         responseBody = response.body ? JSON.parse(response.body) : response.body;
-        let tmp = adjustBody(requestBody, responseBody, adjustingRSRules);
+        let tmp = adjustBody(requestBody ? JSON.parse(requestBody) : requestBody, responseBody, adjustingRSRules);
         responseBody = tmp[1];
         responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
       } catch (e) {
