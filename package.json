@@ -16,9 +16,9 @@
     "eslint-plugin-react": "^7.2.0"
   },
   "dependencies": {
-    "express": "latest",
-    "formidable": "latest",
-    "request": "latest"
+    "express": "^4.15.4",
+    "formidable": "^1.1.1",
+    "request": "^2.81.0"
   },
   "scripts": {
     "start": "./node_modules/.bin/babel-node server.js",
