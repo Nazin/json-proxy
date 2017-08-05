@@ -1,0 +1,19 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "max-len": [2, 200],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": true,
+        "variables": true
+      }
+    ],
+    "no-eval": 0
+  }
+}

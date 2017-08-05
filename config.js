@@ -6,8 +6,7 @@ import fs from 'fs';
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
-export function startConfigServer() {
-
+export default function startConfigServer() {
   app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/index.html'));
   });
@@ -17,7 +16,6 @@ export function startConfigServer() {
   });
 
   app.post('/upload', (req, res) => {
-
     const form = new formidable.IncomingForm();
     let success = true;
 
@@ -26,7 +24,7 @@ export function startConfigServer() {
     form.on('file', (field, file) => {
       try {
         if (file.type === 'application/octet-stream') {
-          let newConfig = fs.readFileSync(file.path, 'utf8');
+          const newConfig = fs.readFileSync(file.path, 'utf8');
           JSON.parse(newConfig);
           fs.writeFileSync('./config.json', newConfig, 'utf8');
         } else {
@@ -38,12 +36,12 @@ export function startConfigServer() {
     });
 
     form.on('error', (err) => {
-      console.log('An error has occured: \n' + err);
+      console.log(`An error has occured: \n${err}`);
       success = false;
     });
 
     form.on('end', () => {
-      res.redirect('/?success=' + success);
+      res.redirect(`/?success=${success}`);
     });
 
     form.parse(req);

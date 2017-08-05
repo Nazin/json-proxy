@@ -1,5 +1,5 @@
 import { createProxyServer, startProxyServer } from './proxy';
-import { startConfigServer } from './config';
+import startConfigServer from './config';
 
 createProxyServer();
 startProxyServer();
