@@ -1,8 +1,23 @@
 {
   "name": "json-proxy",
+  "version": "0.1.0",
+  "description": "JSON proxy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nazin/json-proxy.git"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0"
+  },
   "dependencies": {
     "express": "latest",
     "formidable": "latest",
     "request": "latest"
-  }
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/babel-node server.js"
+  },
+  "author": "Piotr Niziniecki <pniziniecki@gmail.com>",
+  "license": "Apache-2.0"
 }

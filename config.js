@@ -1,52 +1,55 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-const formidable = require('formidable');
-const fs = require('fs');
+import express from 'express';
+import path from 'path';
+import formidable from 'formidable';
+import fs from 'fs';
 
+const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views/index.html'));
-});
+export function startConfigServer() {
 
-app.get('/config.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'config.json'));
-});
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/index.html'));
+  });
 
-app.post('/upload', (req, res) => {
+  app.get('/config.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'config.json'));
+  });
 
-  const form = new formidable.IncomingForm();
-  let success = true;
+  app.post('/upload', (req, res) => {
 
-  form.uploadDir = path.join(__dirname, '/uploads');
+    const form = new formidable.IncomingForm();
+    let success = true;
 
-  form.on('file', (field, file) => {
-    try {
-      if (file.type === 'application/octet-stream') {
-        let newConfig = fs.readFileSync(file.path, 'utf8');
-        JSON.parse(newConfig);
-        fs.writeFileSync('./config.json', newConfig, 'utf8');
-      } else {
+    form.uploadDir = path.join(__dirname, '/uploads');
+
+    form.on('file', (field, file) => {
+      try {
+        if (file.type === 'application/octet-stream') {
+          let newConfig = fs.readFileSync(file.path, 'utf8');
+          JSON.parse(newConfig);
+          fs.writeFileSync('./config.json', newConfig, 'utf8');
+        } else {
+          success = false;
+        }
+      } catch (e) {
         success = false;
       }
-    } catch (e) {
+    });
+
+    form.on('error', (err) => {
+      console.log('An error has occured: \n' + err);
       success = false;
-    }
+    });
+
+    form.on('end', () => {
+      res.redirect('/?success=' + success);
+    });
+
+    form.parse(req);
   });
 
-  form.on('error', (err) => {
-    console.log('An error has occured: \n' + err);
-    success = false;
+  app.listen(3006, () => {
+    console.log('Proxy config server started, listening at http://localhost:3006');
   });
-
-  form.on('end', () => {
-    res.redirect('/?success=' + success);
-  });
-
-  form.parse(req);
-});
-
-app.listen(3006, () => {
-  console.log('Server listening on port 3006');
-});
+}
