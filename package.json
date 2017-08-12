@@ -6,9 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/Nazin/json-proxy.git"
   },
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
+"devDependencies": {
     "eslint": "^4.4.1",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
@@ -16,12 +14,19 @@
     "eslint-plugin-react": "^7.2.0"
   },
   "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "body-parser": "^1.17.2",
+    "cpy-cli": "^1.0.1",
     "express": "^4.15.4",
     "formidable": "^1.1.1",
+    "jsoneditor": "^5.9.3",
     "request": "^2.81.0"
   },
   "scripts": {
-    "start": "./node_modules/.bin/babel-node server.js",
+    "start": "npm run copy && npm run server",
+    "server": "./node_modules/.bin/babel-node server.js",
+    "copy": "./node_modules/.bin/cpy ./**/*.* ../../../public/jsoneditor --cwd=node_modules/jsoneditor/dist --parents",
     "qc": "npm run qc:js",
     "qc:js": "./node_modules/.bin/eslint . --quiet",
     "qc:js:fix": "./node_modules/.bin/eslint . --quiet --fix"

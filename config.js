@@ -2,15 +2,13 @@ import express from 'express';
 import path from 'path';
 import formidable from 'formidable';
 import fs from 'fs';
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json({limit: '50mb'}));
 
 export default function startConfigServer() {
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/index.html'));
-  });
-
   app.get('/config.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'config.json'));
   });
@@ -25,7 +23,6 @@ export default function startConfigServer() {
       try {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
-          JSON.parse(newConfig);
           fs.writeFileSync('./config.json', newConfig, 'utf8');
         } else {
           success = false;
@@ -45,6 +42,11 @@ export default function startConfigServer() {
     });
 
     form.parse(req);
+  });
+
+  app.post('/update', (req, res) => {
+    fs.writeFileSync('./config.json', JSON.stringify(req.body, null, 2), 'utf8');
+    res.send({status: 'success'});
   });
 
   app.listen(3006, () => {
