@@ -1,5 +1,9 @@
 {
   "endpoint": "https://graph.facebook.com",
+  "proxy": {
+    "enabled": false,
+    "url": ""
+  },
   "rules": [
     {
       "enabled": true,

@@ -10,6 +10,7 @@ export function createProxyServer() {
 
     const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
     const rules = (configuration.rules || []).filter(rule => rule.enabled && req.method === rule.method && req.url.match(rule.url));
+    const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
     let requestBody = '';
 
@@ -41,6 +42,7 @@ export function createProxyServer() {
         method: req.method,
         headers,
         body: newRequestBody,
+        proxy,
       };
 
       request(options, (error, response) => {
@@ -51,7 +53,7 @@ export function createProxyServer() {
         }
 
         let responseBody;
-        let responseStatusCode = response.statusCode;
+        let responseStatusCode = response && response.statusCode || 500;
 
         try {
           responseBody = response.body ? JSON.parse(response.body) : response.body;
@@ -61,10 +63,10 @@ export function createProxyServer() {
           responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
         } catch (e) {
           console.log('Problem with adjusting the response');
-          responseBody = response.body;
+          responseBody = response && response.body || JSON.stringify({status: 'ERROR'});
         }
 
-        const responseHeaders = JSON.parse(JSON.stringify(response.headers));
+        const responseHeaders = JSON.parse(JSON.stringify(response && response.headers || {"Content-Type": "application/json"}));
         if (responseHeaders['set-cookie']) {
           responseHeaders['set-cookie'] = responseHeaders['set-cookie'].map(cookie => cookie.replace('Secure; HttpOnly', ''));
         }
