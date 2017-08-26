@@ -2,6 +2,8 @@ import http from 'http';
 import request from 'request';
 import fs from 'fs';
 
+//TODO this file needs some serious refactoring
+
 let server;
 
 export function createProxyServer() {
@@ -9,8 +11,17 @@ export function createProxyServer() {
     console.log(`Serving: ${req.method} ${req.url}`);
 
     const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-    const matchingURLs = (configuration.urls || []).filter(url => url.enabled && req.method === url.method && req.url.match(url.url));
-    const urlConfiguration = matchingURLs.length !== 0 ? matchingURLs[0] : undefined;
+    const endpoint = (configuration.endpoints || []).find(endpoint => req.url.match(new RegExp('^/' + endpoint.name + '/')));
+
+    if (endpoint === undefined) {
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.write(JSON.stringify({status: 'ERROR', message: 'NO_ENDPOINT_CONFIGURED'}));
+      res.end();
+      return;
+    }
+
+    const reqURL = req.url.replace(new RegExp('^/' + endpoint.name + '/'), '/');
+    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && reqURL.match(url.url));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
     let requestBody = '';
@@ -33,7 +44,7 @@ export function createProxyServer() {
       }
 
       const headers = JSON.parse(JSON.stringify(req.headers));
-      headers.host = configuration.endpoint.replace('https://', '');
+      headers.host = endpoint.url.replace('https://', '');
       delete headers['accept-encoding'];
 
       if (urlConfiguration && !urlConfiguration.sendRQ) {
@@ -42,7 +53,7 @@ export function createProxyServer() {
       }
 
       const options = {
-        url: configuration.endpoint + req.url,
+        url: endpoint.url + reqURL,
         method: req.method,
         headers,
         body: newRequestBody,

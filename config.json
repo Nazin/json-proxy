@@ -1,51 +1,76 @@
 {
-  "endpoint": "https://graph.facebook.com",
   "proxy": {
     "enabled": false,
     "url": ""
   },
-  "urls": [
+  "endpoints": [
     {
-      "enabled": true,
-      "url": "/me",
-      "method": "GET",
-      "sendRQ": true,
-      "rules": [
+      "url": "https://graph.facebook.com",
+      "name": "fb",
+      "urls": [
         {
-          "condition": "true",
-          "actions": [
-            "responseBody = {\"name\": \"Test\", \"id\": \"123456789\", \"birthday\": \"01/02/2000\", \"email\": \"test@example.com\"}"
+          "enabled": true,
+          "url": "/me",
+          "method": "GET",
+          "sendRQ": true,
+          "rules": [
+            {
+              "condition": "true",
+              "actions": [
+                "responseBody = {\"name\": \"Test\", \"id\": \"123456789\", \"birthday\": \"01/02/2000\", \"email\": \"test@example.com\"}"
+              ]
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "url": "/me2",
+          "method": "GET",
+          "sendRQ": true,
+          "rules": [
+            {
+              "condition": "true",
+              "actions": [
+                "responseBody = {\"status\": \"Error\"}",
+                "responseStatusCode = 500"
+              ]
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "url": "/[^/]+/feed",
+          "method": "GET",
+          "sendRQ": true,
+          "rules": [
+            {
+              "condition": "responseBody.data.length === 1",
+              "actions": [
+                "responseBody.data[0].message = 'test message'",
+                "delete responseBody.data[0].created_time",
+                "responseBody.data[0].test = {\"field1\": 12, \"field2\": 23}"
+              ]
+            }
           ]
         }
       ]
     },
     {
-      "enabled": true,
-      "url": "/me2",
-      "method": "GET",
-      "sendRQ": true,
-      "rules": [
+      "url": "https://www.googleapis.com",
+      "name": "gapis",
+      "urls": [
         {
-          "condition": "true",
-          "actions": [
-            "responseBody = {\"status\": \"Error\"}",
-            "responseStatusCode = 500"
-          ]
-        }
-      ]
-    },
-    {
-      "enabled": true,
-      "url": "/[^/]+/feed",
-      "method": "GET",
-      "sendRQ": true,
-      "rules": [
-        {
-          "condition": "responseBody.data.length === 1",
-          "actions": [
-            "responseBody.data[0].message = 'test message'",
-            "delete responseBody.data[0].created_time",
-            "responseBody.data[0].test = {\"field1\": 12, \"field2\": 23}"
+          "enabled": true,
+          "url": "/books/v1/volumes",
+          "method": "GET",
+          "sendRQ": true,
+          "rules": [
+            {
+              "condition": "responseBody.totalItems > 0",
+              "actions": [
+                "responseBody.items[0].volumeInfo.title = 'Different book'"
+              ]
+            }
           ]
         }
       ]
