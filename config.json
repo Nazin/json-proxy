@@ -4,12 +4,12 @@
     "enabled": false,
     "url": ""
   },
-  "rules": [
+  "urls": [
     {
       "enabled": true,
       "url": "/me",
       "method": "GET",
-      "adjust": "RS",
+      "sendRQ": true,
       "rules": [
         {
           "condition": "true",
@@ -23,7 +23,7 @@
       "enabled": true,
       "url": "/me2",
       "method": "GET",
-      "adjust": "RS",
+      "sendRQ": true,
       "rules": [
         {
           "condition": "true",
@@ -38,7 +38,7 @@
       "enabled": true,
       "url": "/[^/]+/feed",
       "method": "GET",
-      "adjust": "RS",
+      "sendRQ": true,
       "rules": [
         {
           "condition": "responseBody.data.length === 1",
