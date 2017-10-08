@@ -6,11 +6,13 @@ import fs from 'fs';
 
 let server;
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 export function createProxyServer() {
   server = http.createServer((req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
 
-    const configuration = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+    const configuration = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
     const endpoint = (configuration.endpoints || []).find(endpoint => req.url.match(new RegExp('^/' + endpoint.name + '/')));
 
     if (endpoint === undefined) {
@@ -48,7 +50,7 @@ export function createProxyServer() {
       delete headers['accept-encoding'];
 
       if (urlConfiguration && !urlConfiguration.sendRQ) {
-        adjustAndSendResponse(res, {statusCode: 200}, requestBody, urlConfiguration);
+        adjustAndSendResponse(res, {statusCode: 200}, requestBody, urlConfiguration, endpoint.name);
         return;
       }
 
@@ -64,7 +66,7 @@ export function createProxyServer() {
         if (error) {
           console.log(error);
         }
-        adjustAndSendResponse(res, response, requestBody, urlConfiguration);
+        adjustAndSendResponse(res, response, requestBody, urlConfiguration, endpoint.name);
       });
     });
   });
@@ -105,7 +107,7 @@ function adjustBody(requestBody, responseBody, rules, responseStatusCode) {
   return [requestBody, responseBody, responseStatusCode];
 }
 
-function adjustAndSendResponse(res, response, requestBody, urlConfiguration) {
+function adjustAndSendResponse(res, response, requestBody, urlConfiguration, endpointName) {
 
   let responseBody;
   let responseStatusCode = response && response.statusCode || 500;
@@ -123,7 +125,7 @@ function adjustAndSendResponse(res, response, requestBody, urlConfiguration) {
 
   const responseHeaders = JSON.parse(JSON.stringify(response && response.headers || {"Content-Type": "application/json"}));
   if (responseHeaders['set-cookie']) {
-    responseHeaders['set-cookie'] = responseHeaders['set-cookie'].map(cookie => cookie.replace('Secure; HttpOnly', ''));
+    responseHeaders['set-cookie'] = responseHeaders['set-cookie'].map(cookie => cookie.replace('Secure; HttpOnly', '').replace('Path=/', 'Path=/' + endpointName + '/'));
   }
   delete responseHeaders['content-length'];
 
