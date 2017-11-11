@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 
 const app = express();
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({ limit: '50mb' }));
 
 export default function startConfigServer() {
   app.get('/config.json', (req, res) => {
@@ -46,7 +46,7 @@ export default function startConfigServer() {
 
   app.post('/update', (req, res) => {
     fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(req.body, null, 2), 'utf8');
-    res.send({status: 'success'});
+    res.send({ status: 'success' });
   });
 
   app.listen(3006, () => {
