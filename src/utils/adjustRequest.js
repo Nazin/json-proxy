@@ -3,8 +3,7 @@ import adjustBody from './adjustBody';
 export default function adjustRequest({ requestBody, rules }) {
   let newRequestBody;
   try {
-    newRequestBody = requestBody ? JSON.parse(requestBody) : requestBody;
-    const result = adjustBody({ requestBody: newRequestBody, rules });
+    const result = adjustBody({ requestBody, rules });
     newRequestBody = result.requestBody;
     newRequestBody = newRequestBody ? JSON.stringify(newRequestBody) : newRequestBody;
   } catch (e) {

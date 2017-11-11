@@ -1,4 +1,6 @@
 import http from 'http';
+import express from 'express';
+import bodyParser from 'body-parser';
 import request from 'request';
 import fs from 'fs';
 import sendError from './utils/sendError';
@@ -10,7 +12,13 @@ let server;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export function createProxyServer() {
-  server = http.createServer((req, res) => {
+  const app = express();
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ extended: true }));
+
+  server = http.createServer(app);
+
+  app.use('/', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
 
     const configuration = JSON.parse(fs.readFileSync(`${__dirname}/config.json`, 'utf8'));
@@ -26,39 +34,32 @@ export function createProxyServer() {
     const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && reqURL.match(url.url));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
-    let requestBody = '';
+    const requestBody = req && req.body;
+    const rules = (urlConfiguration && urlConfiguration.rules) || [];
+    const newRequestBody = adjustRequest({ requestBody, rules });
 
-    req.on('data', (data) => {
-      requestBody += data;
-    });
+    if (urlConfiguration && !urlConfiguration.sendRQ) {
+      adjustAndSendResponse({ res, response: { statusCode: 200 }, requestBody, rules, endpointName });
+      return;
+    }
 
-    req.on('end', () => {
-      const rules = (urlConfiguration && urlConfiguration.rules) || [];
-      const newRequestBody = adjustRequest({ requestBody, rules });
+    const headers = JSON.parse(JSON.stringify(req.headers));
+    headers.host = endpoint.url.replace('https://', '');
+    delete headers['accept-encoding'];
 
-      if (urlConfiguration && !urlConfiguration.sendRQ) {
-        adjustAndSendResponse({ res, response: { statusCode: 200 }, requestBody, rules, endpointName });
-        return;
+    const options = {
+      url: endpoint.url + reqURL,
+      method: req.method,
+      headers,
+      body: newRequestBody,
+      proxy,
+    };
+
+    request(options, (error, response) => {
+      if (error) {
+        console.log(error);
       }
-
-      const headers = JSON.parse(JSON.stringify(req.headers));
-      headers.host = endpoint.url.replace('https://', '');
-      delete headers['accept-encoding'];
-
-      const options = {
-        url: endpoint.url + reqURL,
-        method: req.method,
-        headers,
-        body: newRequestBody,
-        proxy,
-      };
-
-      request(options, (error, response) => {
-        if (error) {
-          console.log(error);
-        }
-        adjustAndSendResponse({ res, response, requestBody, rules, endpointName });
-      });
+      adjustAndSendResponse({ res, response, requestBody, rules, endpointName });
     });
   });
 }

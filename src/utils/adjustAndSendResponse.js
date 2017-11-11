@@ -5,7 +5,7 @@ export default function adjustAndSendResponse({ res, response, requestBody, rule
   let responseStatusCode = (response && response.statusCode) || 500;
   try {
     responseBody = response.body ? JSON.parse(response.body) : response.body;
-    const result = adjustBody({ requestBody: requestBody ? JSON.parse(requestBody) : requestBody, responseBody, rules, responseStatusCode });
+    const result = adjustBody({ requestBody, responseBody, rules, responseStatusCode });
     responseBody = result.responseBody;
     responseStatusCode = result.responseStatusCode;
     responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
