@@ -1,9 +1,10 @@
 import http from 'http';
 import request from 'request';
 import fs from 'fs';
+import getFullMockResponse from './utils/getFullMockResponse';
 import sendError from './utils/sendError';
-
-//TODO this file needs some serious refactoring
+import adjustRequest from './utils/adjustRequest';
+import adjustAndSendResponse from './utils/adjustAndSendResponse';
 
 let server;
 
@@ -21,6 +22,7 @@ export function createProxyServer() {
       return;
     }
 
+    const endpointName = endpoint.name;
     const reqURL = req.url.replace(new RegExp('^/' + endpoint.name + '/'), '/');
     const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && reqURL.match(url.url));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
@@ -32,26 +34,21 @@ export function createProxyServer() {
     });
 
     req.on('end', () => {
-      let newRequestBody;
+      if (urlConfiguration && urlConfiguration.mockFullRS) {
+        getFullMockResponse({ req, res, responseFilePath: urlConfiguration.responseFilePath });
+        return;
+      }
 
-      try {
-        newRequestBody = requestBody ? JSON.parse(requestBody) : requestBody;
-        const tmp = adjustBody(newRequestBody, undefined, urlConfiguration && urlConfiguration.rules || []);
-        newRequestBody = tmp[0];
-        newRequestBody = newRequestBody ? JSON.stringify(newRequestBody) : newRequestBody;
-      } catch (e) {
-        console.log('Problem with adjusting the request');
-        newRequestBody = requestBody;
+      const rules = (urlConfiguration && urlConfiguration.rules) || [];
+      const newRequestBody = adjustRequest({ requestBody, rules });
+      if (urlConfiguration && !urlConfiguration.sendRQ) {
+        adjustAndSendResponse({ res, response: { statusCode: 200 }, rules, endpointName });
+        return;
       }
 
       const headers = JSON.parse(JSON.stringify(req.headers));
       headers.host = endpoint.url.replace('https://', '');
       delete headers['accept-encoding'];
-
-      if (urlConfiguration && !urlConfiguration.sendRQ) {
-        adjustAndSendResponse(res, {statusCode: 200}, requestBody, urlConfiguration, endpoint.name);
-        return;
-      }
 
       const options = {
         url: endpoint.url + reqURL,
@@ -65,7 +62,7 @@ export function createProxyServer() {
         if (error) {
           console.log(error);
         }
-        adjustAndSendResponse(res, response, requestBody, urlConfiguration, endpoint.name);
+        adjustAndSendResponse({ res, response, rules, endpointName });
       });
     });
   });
@@ -83,52 +80,4 @@ export function startProxyServer() {
 
 export function stopProxyServer() {
   server.close();
-}
-
-function adjustBody(requestBody, responseBody, rules, responseStatusCode) {
-  rules.forEach((detailedRule) => {
-    try {
-      if (eval(detailedRule.condition)) {
-        console.log(`Condition "${detailedRule.condition}" valid`);
-        detailedRule.actions.forEach((action) => {
-          console.log(`Applying rule: ${action}`);
-          try {
-            eval(action);
-          } catch (e) {
-            console.log('invalid rule');
-          }
-        });
-      }
-    } catch (e) {
-      console.log(`invalid condition: "${detailedRule.condition}"`);
-    }
-  });
-  return [requestBody, responseBody, responseStatusCode];
-}
-
-function adjustAndSendResponse(res, response, requestBody, urlConfiguration, endpointName) {
-
-  let responseBody;
-  let responseStatusCode = response && response.statusCode || 500;
-
-  try {
-    responseBody = response.body ? JSON.parse(response.body) : response.body;
-    const tmp = adjustBody(requestBody ? JSON.parse(requestBody) : requestBody, responseBody, urlConfiguration && urlConfiguration.rules || [], responseStatusCode);
-    responseBody = tmp[1];
-    responseStatusCode = tmp[2];
-    responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;
-  } catch (e) {
-    console.log('Problem with adjusting the response');
-    responseBody = response && response.body || JSON.stringify({status: 'ERROR'});
-  }
-
-  const responseHeaders = JSON.parse(JSON.stringify(response && response.headers || {"Content-Type": "application/json"}));
-  if (responseHeaders['set-cookie']) {
-    responseHeaders['set-cookie'] = responseHeaders['set-cookie'].map(cookie => cookie.replace('Secure; HttpOnly', '').replace('Path=/', 'Path=/' + endpointName + '/'));
-  }
-  delete responseHeaders['content-length'];
-
-  res.writeHead(responseStatusCode, responseHeaders);
-  res.write(responseBody);
-  res.end();
 }
