@@ -1,6 +1,7 @@
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import request from 'request';
 import fs from 'fs';
 import sendError from './utils/sendError';
@@ -15,6 +16,10 @@ export function createProxyServer() {
   const app = express();
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(cors({
+    origin: (ignored, callback) => callback(null, true),
+    credentials: true,
+  }));
 
   server = http.createServer(app);
 
@@ -56,6 +61,7 @@ export function createProxyServer() {
     };
 
     request(options, (error, response) => {
+      console.log('Forward call to ', options.url);
       if (error) {
         console.log(error);
       }
