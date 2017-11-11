@@ -1,6 +1,7 @@
 import http from 'http';
 import request from 'request';
 import fs from 'fs';
+import sendError from './utils/sendError';
 
 //TODO this file needs some serious refactoring
 
@@ -16,9 +17,7 @@ export function createProxyServer() {
     const endpoint = (configuration.endpoints || []).find(endpoint => req.url.match(new RegExp('^/' + endpoint.name + '/')));
 
     if (endpoint === undefined) {
-      res.writeHead(200, {"Content-Type": "application/json"});
-      res.write(JSON.stringify({status: 'ERROR', message: 'NO_ENDPOINT_CONFIGURED'}));
-      res.end();
+      sendError({ res, message: 'NO_ENDPOINT_CONFIGURED' });
       return;
     }
 
