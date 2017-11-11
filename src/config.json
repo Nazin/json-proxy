@@ -60,7 +60,7 @@
       "name": "gapis",
       "urls": [
         {
-          "enabled": true,
+          "enabled": false,
           "url": "/books/v1/volumes",
           "method": "GET",
           "sendRQ": true,
@@ -69,6 +69,20 @@
               "condition": "responseBody.totalItems > 0",
               "actions": [
                 "responseBody.items[0].volumeInfo.title = 'Different book'"
+              ]
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "url": "/books/v1/volumes",
+          "method": "GET",
+          "sendRQ": false,
+          "rules": [
+            {
+              "condition": "true",
+              "actions": [
+                "responseBody = loadFromFile('data/sample.json')"
               ]
             }
           ]

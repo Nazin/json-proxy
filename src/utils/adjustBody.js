@@ -1,3 +1,10 @@
+import loadFile from './loadFile';
+
+// eslint-disable-next-line no-unused-vars
+function loadFromFile(filePath) {
+  return loadFile(filePath);
+}
+
 export default function adjustBody({ requestBody, responseBody, rules, responseStatusCode }) {
   rules.forEach((detailedRule) => {
     try {
