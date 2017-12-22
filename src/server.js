@@ -2,14 +2,11 @@ import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import configController from './controllers/config';
-import proxyController from './controllers/proxy';
+import controllers from './controllers';
 
 let server;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-// TODO move proxy urls to controllers, rename proxy.js to server.js and server.js to index.js
 
 export function createProxyServer() {
   const app = express();
@@ -22,8 +19,7 @@ export function createProxyServer() {
 
   server = http.createServer(app);
 
-  app.use('/config', configController());
-  app.use('/', proxyController());
+  app.use(controllers());
 }
 
 export function startProxyServer() {
