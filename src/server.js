@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import compression from 'compression';
 import cors from 'cors';
@@ -5,6 +6,7 @@ import bodyParser from 'body-parser';
 import controllers from './controllers';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.ROOT = path.join(__dirname, '..');
 
 const app = express();
 

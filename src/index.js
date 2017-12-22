@@ -1,8 +1,5 @@
-import path from 'path';
 import http from 'http';
 import Server from './server';
-
-process.env.ROOT = path.join(__dirname, '/../');
 
 const httpServer = http.createServer(Server);
 
