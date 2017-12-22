@@ -1,9 +1,10 @@
 import http from 'http';
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
 import request from 'request';
 import fs from 'fs';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import configController from './controllers/config';
 import sendError from './utils/sendError';
 import adjustRequest from './utils/adjustRequest';
 import adjustAndSendResponse from './utils/adjustAndSendResponse';
@@ -11,6 +12,8 @@ import adjustAndSendResponse from './utils/adjustAndSendResponse';
 let server;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+// TODO move proxy urls to controllers, rename proxy.js to server.js and server.js to index.js
 
 export function createProxyServer() {
   const app = express();
@@ -22,6 +25,8 @@ export function createProxyServer() {
   }));
 
   server = http.createServer(app);
+
+  app.use('/config', configController());
 
   app.use('/', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
@@ -77,6 +82,7 @@ export function startProxyServer() {
       return;
     }
     console.log('Proxy server started, listening at http://localhost:3005');
+    console.log('Configuration UI available at http://localhost:3005/config');
   });
 }
 

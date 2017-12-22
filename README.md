@@ -15,5 +15,5 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
     ```
 
 ## Developer Notes
-1. Proxy runs on two ports, 3005 - used to relay the communication to webservice, 3006 - used to adjust the configuration
+1. Proxy runs on port 3005 by default to relay the communication to webservice. The /config endpoint can be used to adjust the configuration in simple UI
 1. config.json defines rules and endpoints
