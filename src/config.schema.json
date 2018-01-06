@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "title": "Configuration schema",
+  "description": "Schema for json proxy configuration.",
+  "properties": {
+    "proxy": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Tells whether to enable the proxy configuration for handling the requests."
+        },
+        "url": {
+          "type": "string",
+          "description": "Proxy URI configuration."
+        }
+      },
+      "additionalProperties": false,
+      "required": ["enabled", "url"]
+    },
+    "endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "List of endpoints used by proxy. There can be multiple endpoints defined.",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL for some kind of API.",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Endpoint name under which the above URL will be server and proxied through.",
+            "pattern": "^[a-zA-Z0-9-_]+$"
+          },
+          "urls": {
+            "type": "array",
+            "description": "List of URLs inside the above defined API.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Tells whether to enable the rules execution for configured API URL."
+                },
+                "url": {
+                  "type": "string",
+                  "description": "The exact URL inside the API.",
+                  "minLength": 1
+                },
+                "method": {
+                  "type": "string",
+                  "description": "HTTP method which is used to match the incoming requests.",
+                  "enum": ["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH"]
+                },
+                "sendRQ": {
+                  "type": "boolean",
+                  "description": "Tells whether to in fact send the request to defined API at all or not."
+                },
+                "rules": {
+                  "type": "array",
+                  "description": "List of rules which can be used when the above criteria are met.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "condition": {
+                        "type": "string",
+                        "description": "Condition whether below actions should be executed or not.",
+                        "minLength": 1
+                      },
+                      "actions": {
+                        "type": "array",
+                        "description": "List of all actions to be executed either on request or response when above condition is met.",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": ["condition", "actions"]
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": ["enabled", "url", "method", "sendRQ", "rules"]
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": ["url", "name", "urls"]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["proxy", "endpoints"]
+}

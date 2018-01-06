@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Config Uploader</title>
   <link href="jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
-  <script src="jsoneditor/jsoneditor-minimalist.min.js"></script>
+  <script src="jsoneditor/jsoneditor.min.js"></script>
 </head>
 <body>
   <div id="fail" style="display:none; color: red; font-weight: bold; margin-bottom: 10px;">Upload failed. Please ensure the file has correct mime type and correct JSON format.</div>
@@ -20,7 +20,7 @@
   </form>
 
   <script>
-
+    // TODO some refactoring might be needed
     document.addEventListener('DOMContentLoaded', () => {
       const params = location.search.substring(1).split('&');
       params.forEach((val) => {
@@ -31,29 +31,39 @@
       })
     });
 
-    var container = document.getElementById('jsoneditor');
-    var options = {};
-    var editor = new JSONEditor(container, options);
-
     var request = new XMLHttpRequest();
-    request.open('GET', 'config.json', true);
+    request.open('GET', 'config.schema.json', true);
     request.onload = function() {
       if (request.status === 200) {
-        editor.set(JSON.parse(request.responseText));
+        var container = document.getElementById('jsoneditor');
+        var options = {
+          schema: JSON.parse(request.responseText)
+        };
+        var editor = new JSONEditor(container, options);
+
+        var configRequest = new XMLHttpRequest();
+        configRequest.open('GET', 'config.json', true);
+        configRequest.onload = function() {
+          if (configRequest.status === 200) {
+            editor.set(JSON.parse(configRequest.responseText));
+          }
+        };
+
+        configRequest.send();
+
+        var saveConfiguration = document.getElementById('save-configuration');
+
+        saveConfiguration.addEventListener('click', () => {
+          var json = editor.get();
+          var request = new XMLHttpRequest();
+          request.open('POST', 'update', true);
+          request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+          request.send(JSON.stringify(json));
+        });
       }
     };
 
     request.send();
-
-    var saveConfiguration = document.getElementById('save-configuration');
-
-    saveConfiguration.addEventListener('click', () => {
-      var json = editor.get();
-      var request = new XMLHttpRequest();
-      request.open('POST', 'update', true);
-      request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-      request.send(JSON.stringify(json));
-    });
   </script>
 </body>
 </html>

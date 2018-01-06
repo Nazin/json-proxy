@@ -7,11 +7,16 @@ import isJSON from '../utils/isJSON';
 export default () => {
   const router = new express.Router();
   const configJSONLocation = path.join(process.env.ROOT, 'src', 'config.json');
+  const configSchemaJSONLocation = path.join(process.env.ROOT, 'src', 'config.schema.json');
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
 
   router.get('/config.json', (req, res) => {
     res.sendFile(configJSONLocation);
+  });
+
+  router.get('/config.schema.json', (req, res) => {
+    res.sendFile(configSchemaJSONLocation);
   });
 
   router.post('/', (req, res) => {
