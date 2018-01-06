@@ -8,5 +8,6 @@ httpServer.listen(config.port, (error) => {
   if (error) {
     return console.error(error);
   }
-  return console.log(`Proxy server started, listening at http://localhost:${config.port}. Configuration UI available at http://localhost:${config.port}/config.`);
+  const configurationInfo = config.configUI.enabled ? `Configuration UI available at http://localhost:${config.port}${config.configUI.endpoint}.` : '';
+  return console.log(`Proxy server started, listening at http://localhost:${config.port}. ${configurationInfo}`);
 });

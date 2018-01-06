@@ -1,5 +1,9 @@
 {
   "port": 3005,
+  "configUI": {
+    "enabled": true,
+    "endpoint": "/config"
+  },
   "bodyParserLimit": "5mb",
   "cors": {
     "credentials": true
