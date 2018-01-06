@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import formidable from 'formidable';
 import express from 'express';
+import isJSON from '../utils/isJSON';
 
 export default () => {
   const router = new express.Router();
@@ -23,7 +24,11 @@ export default () => {
       try {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
-          fs.writeFileSync(configJSONLocation, newConfig, 'utf8');
+          if (isJSON(newConfig)) {
+            fs.writeFileSync(configJSONLocation, newConfig, 'utf8');
+          } else {
+            success = false;
+          }
         } else {
           success = false;
         }
