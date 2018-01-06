@@ -30,7 +30,9 @@ export default () => {
     const newRequestBody = adjustRequest({ requestBody, rules });
 
     if (urlConfiguration && !urlConfiguration.sendRQ) {
-      adjustAndSendResponse({ res, response: { statusCode: 200 }, requestBody, rules, endpointName });
+      adjustAndSendResponse({
+        res, response: { statusCode: 200 }, requestBody, rules, endpointName,
+      });
       return;
     }
 
@@ -51,7 +53,9 @@ export default () => {
       if (error) {
         console.log(error);
       }
-      adjustAndSendResponse({ res, response, requestBody, rules, endpointName });
+      adjustAndSendResponse({
+        res, response, requestBody, rules, endpointName,
+      });
     });
   });
 

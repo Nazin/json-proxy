@@ -1,11 +1,15 @@
 import adjustBody from './adjustBody';
 
-export default function adjustAndSendResponse({ res, response, requestBody, rules, endpointName }) {
+export default function adjustAndSendResponse({
+  res, response, requestBody, rules, endpointName,
+}) {
   let responseBody;
   let responseStatusCode = (response && response.statusCode) || 500;
   try {
     responseBody = response.body ? JSON.parse(response.body) : response.body;
-    const result = adjustBody({ requestBody, responseBody, rules, responseStatusCode });
+    const result = adjustBody({
+      requestBody, responseBody, rules, responseStatusCode,
+    });
     responseBody = result.responseBody;
     responseStatusCode = result.responseStatusCode;
     responseBody = responseBody ? JSON.stringify(responseBody) : responseBody;

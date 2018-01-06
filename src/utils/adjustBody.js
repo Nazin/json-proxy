@@ -5,7 +5,9 @@ function loadFromFile(filePath) {
   return loadFile(filePath);
 }
 
-export default function adjustBody({ requestBody, responseBody, rules, responseStatusCode }) {
+export default function adjustBody({
+  requestBody, responseBody, rules, responseStatusCode,
+}) {
   rules.forEach((detailedRule) => {
     try {
       if (eval(detailedRule.condition)) {
