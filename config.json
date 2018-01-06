@@ -1,0 +1,7 @@
+{
+  "port": 3005,
+  "bodyParserLimit": "5mb",
+  "cors": {
+    "credentials": true
+  }
+}
