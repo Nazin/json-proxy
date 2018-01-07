@@ -8,7 +8,7 @@ export default function adjustAndSendResponse({
   try {
     responseBody = response.body ? JSON.parse(response.body) : response.body;
     const result = adjustBody({
-      requestBody, responseBody, rules, responseStatusCode,
+      requestBody, responseBody, rules, responseStatusCode, isResponse: true,
     });
     responseBody = result.responseBody;
     responseStatusCode = result.responseStatusCode;

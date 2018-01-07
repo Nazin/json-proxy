@@ -29,7 +29,7 @@
           "sendRQ": true,
           "rules": [
             {
-              "condition": "true",
+              "condition": "isResponse",
               "actions": [
                 "responseBody = {\"status\": \"Error\"}",
                 "responseStatusCode = 500"

@@ -5,8 +5,8 @@ function loadFromFile(filePath) {
   return loadFile(filePath);
 }
 
-export default function adjustBody({
-  requestBody, responseBody, rules, responseStatusCode,
+export default function adjustBody({// eslint-disable-next-line no-unused-vars
+  requestBody, responseBody, rules, responseStatusCode, isResponse = false, isRequest = false,
 }) {
   rules.forEach((detailedRule) => {
     try {

@@ -49,7 +49,7 @@ export default () => {
     };
 
     request(options, (error, response) => {
-      console.log('Forward call to ', options.url);
+      console.log('Forwarding call to ', options.url);
       if (error) {
         console.log(error);
       }
