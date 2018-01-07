@@ -41,6 +41,7 @@ export default () => {
       } catch (e) {
         success = false;
       }
+      fs.unlinkSync(file.path);
     });
 
     form.on('error', (err) => {
