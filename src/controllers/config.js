@@ -2,12 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import formidable from 'formidable';
 import express from 'express';
-import isJSON from '../utils/isJSON';
+import isProperJSON from '../utils/isProperJSON';
 
 export default () => {
   const router = new express.Router();
   const configJSONLocation = path.join(process.env.ROOT, 'src', 'config.json');
   const configSchemaJSONLocation = path.join(process.env.ROOT, 'src', 'config.schema.json');
+  const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
 
@@ -29,7 +30,7 @@ export default () => {
       try {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
-          if (isJSON(newConfig)) {
+          if (isProperJSON(JSON.parse(newConfig), configSchema)) {
             fs.writeFileSync(configJSONLocation, newConfig, 'utf8');
           } else {
             success = false;
@@ -55,8 +56,12 @@ export default () => {
   });
 
   router.post('/update', (req, res) => {
-    fs.writeFileSync(configJSONLocation, JSON.stringify(req.body, null, 2), 'utf8');
-    res.send({ status: 'success' });
+    if (isProperJSON(req.body, configSchema)) {
+      fs.writeFileSync(configJSONLocation, JSON.stringify(req.body, null, 2), 'utf8');
+      res.send({ status: 'success' });
+    } else {
+      res.send({ status: 'failure' });
+    }
   });
 
   return router;
