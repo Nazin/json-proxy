@@ -1,5 +1,5 @@
 import http from 'http';
-import Server from './src/server';
+import Server from './server/server';
 import serverConfig from './server-config.json';
 
 const httpServer = http.createServer(Server);
