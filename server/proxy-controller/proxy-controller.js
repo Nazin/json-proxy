@@ -4,7 +4,7 @@ import request from 'request';
 import { Router } from 'express';
 import sendError from './sendError';
 import adjustRequest from './adjustRequest';
-import adjustResponse from './adjustAndSendResponse';
+import adjustResponse from './adjustResponse';
 
 export default () => {
   const router = new Router();

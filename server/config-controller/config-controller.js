@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import formidable from 'formidable';
 import express from 'express';
-import isProperJSON from '../proxy-controller/isProperJSON';
+import isProperJSON from './json-validator';
 
 export default () => {
   const router = new express.Router();
