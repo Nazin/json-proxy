@@ -12,7 +12,7 @@ export default () => {
   router.all('*', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
 
-    const configuration = JSON.parse(fs.readFileSync(path.join(process.env.ROOT, 'src', 'config.json'), 'utf8'));
+    const configuration = JSON.parse(fs.readFileSync(path.join(process.env.ROOT, 'configs', 'proxy-config.json'), 'utf8'));
     const endpoint = (configuration.endpoints || []).find(singleEndpoint => req.url.match(new RegExp(`^/${singleEndpoint.name}/`)));
 
     if (endpoint === undefined) {

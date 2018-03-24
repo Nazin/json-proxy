@@ -6,8 +6,8 @@ import isProperJSON from '../utils/isProperJSON';
 
 export default () => {
   const router = new express.Router();
-  const configJSONLocation = path.join(process.env.ROOT, 'src', 'config.json');
-  const configSchemaJSONLocation = path.join(process.env.ROOT, 'src', 'config.schema.json');
+  const configJSONLocation = path.join(process.env.ROOT, 'configs', 'proxy-config.json');
+  const configSchemaJSONLocation = path.join(process.env.ROOT, 'proxy-config.schema.json');
   const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
