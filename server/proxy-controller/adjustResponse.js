@@ -1,6 +1,8 @@
 import adjustBody from './adjustBody';
 
-export default function adjustResponse({ response, requestBody, rules, endpointName }) {
+export default function adjustResponse({
+  response, requestBody, rules, endpointName,
+}) {
   let responseBody;
   let responseStatusCode = (response && response.statusCode) || 500;
   try {

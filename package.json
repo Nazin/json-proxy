@@ -7,11 +7,9 @@
     "url": "git+https://github.com/Nazin/json-proxy.git"
   },
   "devDependencies": {
-    "eslint": "^4.15.0",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.5.1"
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
   },
   "dependencies": {
     "ajv": "^6.0.1",
@@ -31,8 +29,8 @@
     "server": "./node_modules/.bin/babel-node index.js",
     "copy": "./node_modules/.bin/cpy ./**/*.* ../../../public/jsoneditor --cwd=node_modules/jsoneditor/dist --parents",
     "qc": "npm run qc:js",
-    "qc:js": "./node_modules/.bin/eslint src --quiet",
-    "qc:js:fix": "./node_modules/.bin/eslint src --quiet --fix"
+    "qc:js": "./node_modules/.bin/eslint server --quiet",
+    "qc:js:fix": "./node_modules/.bin/eslint server --quiet --fix"
   },
   "author": "Piotr Niziniecki <pniziniecki@gmail.com>",
   "license": "Apache-2.0"

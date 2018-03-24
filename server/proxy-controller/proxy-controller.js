@@ -30,7 +30,9 @@ export default () => {
     const newRequestBody = adjustRequest({ requestBody, rules });
 
     if (urlConfiguration && !urlConfiguration.sendRQ) {
-      const adjustedResponse = adjustResponse({ response: { statusCode: 200 }, requestBody, rules, endpointName });
+      const adjustedResponse = adjustResponse({
+        response: { statusCode: 200 }, requestBody, rules, endpointName,
+      });
 
       setTimeout(() => {
         res.writeHead(adjustedResponse.responseStatusCode, adjustedResponse.responseHeaders);
@@ -59,7 +61,9 @@ export default () => {
         console.log(error);
       }
 
-      const adjustedResponse = adjustResponse({ response, requestBody, rules, endpointName });
+      const adjustedResponse = adjustResponse({
+        response, requestBody, rules, endpointName,
+      });
 
       setTimeout(() => {
         res.writeHead(adjustedResponse.responseStatusCode, adjustedResponse.responseHeaders);
