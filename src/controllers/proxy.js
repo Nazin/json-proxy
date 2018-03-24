@@ -4,7 +4,7 @@ import request from 'request';
 import { Router } from 'express';
 import sendError from '../utils/sendError';
 import adjustRequest from '../utils/adjustRequest';
-import adjustAndSendResponse from '../utils/adjustAndSendResponse';
+import adjustResponse from '../utils/adjustAndSendResponse';
 
 export default () => {
   const router = new Router();
@@ -22,7 +22,7 @@ export default () => {
 
     const endpointName = endpoint.name;
     const reqURL = req.url.replace(new RegExp(`^/${endpoint.name}/`), '/');
-    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && reqURL.match(url.url));
+    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && url.url.match(reqURL.split('?')[0]));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
     const requestBody = req && req.body;
@@ -30,9 +30,14 @@ export default () => {
     const newRequestBody = adjustRequest({ requestBody, rules });
 
     if (urlConfiguration && !urlConfiguration.sendRQ) {
-      adjustAndSendResponse({
-        res, response: { statusCode: 200 }, requestBody, rules, endpointName,
-      });
+      const adjustedResponse = adjustResponse({ response: { statusCode: 200 }, requestBody, rules, endpointName });
+
+      setTimeout(() => {
+        res.writeHead(adjustedResponse.responseStatusCode, adjustedResponse.responseHeaders);
+        res.write(adjustedResponse.responseBody);
+        res.end();
+      }, (urlConfiguration && urlConfiguration.delay) || 0);
+
       return;
     }
 
@@ -53,9 +58,14 @@ export default () => {
       if (error) {
         console.log(error);
       }
-      adjustAndSendResponse({
-        res, response, requestBody, rules, endpointName,
-      });
+
+      const adjustedResponse = adjustResponse({ response, requestBody, rules, endpointName });
+
+      setTimeout(() => {
+        res.writeHead(adjustedResponse.responseStatusCode, adjustedResponse.responseHeaders);
+        res.write(adjustedResponse.responseBody);
+        res.end();
+      }, (urlConfiguration && urlConfiguration.delay) || 0);
     });
   });
 

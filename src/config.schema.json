@@ -59,6 +59,10 @@
                   "type": "boolean",
                   "description": "Tells whether to in fact send the request to defined API at all or not."
                 },
+                "delay": {
+                  "type": "integer",
+                  "description": "Delay in miliseconds that will be applied before response is sent to the client"
+                },
                 "rules": {
                   "type": "array",
                   "description": "List of rules which can be used when the above criteria are met.",
