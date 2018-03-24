@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import request from 'request';
 import { Router } from 'express';
-import sendError from '../utils/sendError';
-import adjustRequest from '../utils/adjustRequest';
-import adjustResponse from '../utils/adjustAndSendResponse';
+import sendError from './sendError';
+import adjustRequest from './adjustRequest';
+import adjustResponse from './adjustAndSendResponse';
 
 export default () => {
   const router = new Router();

@@ -1,7 +1,7 @@
 import express from 'express';
-import configController from './config';
-import proxyController from './proxy';
-import config from '../../server-config.json';
+import configController from './controllers/config';
+import proxyController from './proxy-controller/proxy-controller';
+import config from '../server-config.json';
 
 export default () => {
   const router = new express.Router();

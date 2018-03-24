@@ -7,7 +7,7 @@ import serverConfig from '../server-config.json';
 import controllers from './controllers';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-process.env.ROOT = path.join(__dirname, '..');
+process.env.ROOT = path.join('.');
 
 const app = express();
 
