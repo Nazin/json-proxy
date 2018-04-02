@@ -1,4 +1,4 @@
-# JSON proxy
+# MIM JSON proxy
 
 A tool which can be used as ‘man in the middle’ proxy. It can be used to sit between two JSON webservices endpoints (e.g. Facebook/Twitter and your application) to intercept the webservices traffic between them and modify it.
 

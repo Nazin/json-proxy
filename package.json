@@ -1,7 +1,7 @@
 {
-  "name": "json-proxy",
+  "name": "mim-json-proxy",
   "version": "0.2.0",
-  "description": "JSON proxy",
+  "description": "Man in the middle JSON proxy",
   "engines": {
     "node": ">=8.9.0",
     "npm": ">=5.6.0"
@@ -36,5 +36,11 @@
     "qc:js:fix": "./node_modules/.bin/eslint server --quiet --fix"
   },
   "author": "Piotr Niziniecki <pniziniecki@gmail.com>",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "keywords": [
+    "json",
+    "proxy",
+    "mim",
+    "utility"
+  ]
 }
