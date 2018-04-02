@@ -22,7 +22,6 @@
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
-    "cpy-cli": "^1.0.1",
     "express": "^4.16.3",
     "formidable": "^1.2.1",
     "jsoneditor": "^5.14.1",
@@ -30,8 +29,7 @@
     "spdy": "^3.4.7"
   },
   "scripts": {
-    "start": "npm run copy && npm run server",
-    "server": "./node_modules/.bin/babel-node index.js",
+    "start": "./node_modules/.bin/babel-node index.js",
     "copy": "./node_modules/.bin/cpy ./**/*.* ../../../public/jsoneditor --cwd=node_modules/jsoneditor/dist --parents",
     "qc": "npm run qc:js",
     "qc:js": "./node_modules/.bin/eslint server --quiet",

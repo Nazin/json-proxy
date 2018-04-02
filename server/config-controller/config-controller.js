@@ -11,6 +11,7 @@ export default () => {
   const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
+  router.use(express.static(path.join(process.env.ROOT, 'node_modules', 'jsoneditor', 'dist')));
 
   router.get('/config.json', (req, res) => {
     res.send(getSelectedConfig());
