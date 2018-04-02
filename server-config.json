@@ -7,5 +7,6 @@
   "bodyParserLimit": "5mb",
   "cors": {
     "credentials": true
-  }
+  },
+  "https": false
 }
