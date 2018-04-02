@@ -3,20 +3,33 @@ import spdy from 'spdy';
 import http from 'http';
 import fs from 'fs';
 import Server from './server/server';
-import serverConfig from './server-config.json';
+import defaultServerConfig from './server-config.json';
 
-const options = {
-  key: fs.readFileSync(path.join('.', 'certificates', 'server.key')),
-  cert: fs.readFileSync(path.join('.', 'certificates', 'server.crt')),
-};
+class JsonProxy {
 
-const httpServer = serverConfig.https ? spdy.createServer(options, Server) : http.createServer(Server);
-
-httpServer.listen(process.env.PORT || serverConfig.port, (error) => {
-  if (error) {
-    return console.error(error);
+  constructor(serverConfig = {}) {
+    this.serverConfig = Object.assign({}, defaultServerConfig, serverConfig);
+    this.createServer();
   }
-  const protocol = serverConfig.https ? 'https' : 'http';
-  const configurationInfo = serverConfig.configUI.enabled ? `Configuration UI available at ${protocol}://localhost:${process.env.PORT || serverConfig.port}${serverConfig.configUI.endpoint}.` : '';
-  return console.log(`Proxy server started, listening at ${protocol}://localhost:${process.env.PORT || serverConfig.port}. ${configurationInfo}`);
-});
+
+  createServer() {
+    const httpsOptions = {
+      key: fs.readFileSync(path.resolve(this.serverConfig.https.key)),
+      cert: fs.readFileSync(path.resolve(this.serverConfig.https.cert)),
+    };
+    this.httpServer = this.serverConfig.https.enabled ? spdy.createServer(httpsOptions, Server) : http.createServer(Server);
+  }
+
+  start() {
+    this.httpServer.listen(process.env.PORT || this.serverConfig.port, (error) => {
+      if (error) {
+        return console.error(error);
+      }
+      const protocol = this.serverConfig.https.enabled ? 'https' : 'http';
+      const configurationInfo = this.serverConfig.configUI.enabled ? `Configuration UI available at ${protocol}://localhost:${process.env.PORT || this.serverConfig.port}${this.serverConfig.configUI.endpoint}.` : '';
+      return console.log(`Proxy server started, listening at ${protocol}://localhost:${process.env.PORT || this.serverConfig.port}. ${configurationInfo}`);
+    });
+  }
+}
+
+module.exports = JsonProxy;

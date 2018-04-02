@@ -8,5 +8,9 @@
   "cors": {
     "credentials": true
   },
-  "https": false
+  "https": {
+    "enabled": false,
+    "key": "./certificates/server.key",
+    "cert": "./certificates/server.crt"
+  }
 }
