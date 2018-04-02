@@ -3,21 +3,21 @@ import path from 'path';
 import formidable from 'formidable';
 import express from 'express';
 import isProperJSON from './json-validator';
+import { updateSelectedConfig, getSelectedConfig } from '../config-manager';
 
 export default () => {
   const router = new express.Router();
-  const configJSONLocation = path.join(process.env.ROOT, 'configs', 'proxy-config.json');
   const configSchemaJSONLocation = path.join(process.env.ROOT, 'proxy-config.schema.json');
   const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
 
   router.get('/config.json', (req, res) => {
-    res.sendFile(configJSONLocation);
+    res.send(getSelectedConfig());
   });
 
   router.get('/config.schema.json', (req, res) => {
-    res.sendFile(configSchemaJSONLocation);
+    res.send(configSchema);
   });
 
   router.post('/', (req, res) => {
@@ -31,7 +31,7 @@ export default () => {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
           if (isProperJSON(JSON.parse(newConfig), configSchema)) {
-            fs.writeFileSync(configJSONLocation, newConfig, 'utf8');
+            updateSelectedConfig(newConfig);
           } else {
             success = false;
           }
@@ -58,7 +58,7 @@ export default () => {
 
   router.post('/update', (req, res) => {
     if (isProperJSON(req.body, configSchema)) {
-      fs.writeFileSync(configJSONLocation, JSON.stringify(req.body, null, 2), 'utf8');
+      updateSelectedConfig(req.body);
       res.send({ status: 'success' });
     } else {
       res.send({ status: 'failure' });
