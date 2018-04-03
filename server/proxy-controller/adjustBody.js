@@ -1,11 +1,11 @@
-import loadFile from './loadFile';
+const loadFile = require('./loadFile');
 
 // eslint-disable-next-line no-unused-vars
 function loadFromFile(filePath) {
   return loadFile(filePath);
 }
 
-export default function adjustBody({// eslint-disable-next-line no-unused-vars
+module.exports = function adjustBody({// eslint-disable-next-line no-unused-vars
   requestBody, responseBody, rules, responseStatusCode, isResponse = false, isRequest = false,
 }) {
   rules.forEach((detailedRule) => {
@@ -26,4 +26,4 @@ export default function adjustBody({// eslint-disable-next-line no-unused-vars
     }
   });
   return { requestBody, responseBody, responseStatusCode };
-}
+};

@@ -1,6 +1,6 @@
 {
   "name": "mim-json-proxy",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Man in the middle JSON proxy",
   "engines": {
     "node": ">=8.9.0",
@@ -17,8 +17,6 @@
   },
   "dependencies": {
     "ajv": "^6.4.0",
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
@@ -29,7 +27,7 @@
     "spdy": "^3.4.7"
   },
   "scripts": {
-    "start": "./node_modules/.bin/babel-node local.js",
+    "start": "node local.js",
     "qc": "npm run qc:js",
     "qc:js": "./node_modules/.bin/eslint server --quiet",
     "qc:js:fix": "./node_modules/.bin/eslint server --quiet --fix"

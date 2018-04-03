@@ -1,11 +1,11 @@
-import fs from 'fs';
-import path from 'path';
-import formidable from 'formidable';
-import express from 'express';
-import isProperJSON from './json-validator';
-import { updateSelectedConfig, getSelectedConfig } from '../config-manager';
+const fs = require('fs');
+const path = require('path');
+const formidable = require('formidable');
+const express = require('express');
+const isProperJSON = require('./json-validator');
+const configManager = require('../config-manager');
 
-export default () => {
+module.exports = () => {
   const router = new express.Router();
   const configSchemaJSONLocation = path.join(process.env.ROOT, 'proxy-config.schema.json');
   const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
@@ -14,7 +14,7 @@ export default () => {
   router.use(express.static(path.join(process.env.ROOT, 'node_modules', 'jsoneditor', 'dist')));
 
   router.get('/config.json', (req, res) => {
-    res.send(getSelectedConfig());
+    res.send(configManager.getSelectedConfig());
   });
 
   router.get('/config.schema.json', (req, res) => {
@@ -32,7 +32,7 @@ export default () => {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
           if (isProperJSON(JSON.parse(newConfig), configSchema)) {
-            updateSelectedConfig(newConfig);
+            configManager.updateSelectedConfig(newConfig);
           } else {
             success = false;
           }
@@ -59,7 +59,7 @@ export default () => {
 
   router.post('/update', (req, res) => {
     if (isProperJSON(req.body, configSchema)) {
-      updateSelectedConfig(req.body);
+      configManager.updateSelectedConfig(req.body);
       res.send({ status: 'success' });
     } else {
       res.send({ status: 'failure' });

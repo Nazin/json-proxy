@@ -1,6 +1,6 @@
-import adjustBody from './adjustBody';
+const adjustBody = require('./adjustBody');
 
-export default function adjustRequest({ requestBody, rules }) {
+module.exports = function adjustRequest({ requestBody, rules }) {
   let newRequestBody;
   try {
     const result = adjustBody({ requestBody, rules, isRequest: true });
@@ -11,4 +11,4 @@ export default function adjustRequest({ requestBody, rules }) {
     newRequestBody = requestBody;
   }
   return newRequestBody;
-}
+};

@@ -1,10 +1,10 @@
-import path from 'path';
-import express from 'express';
-import compression from 'compression';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import serverConfig from '../server-config.json';
-import controllers from './controllers';
+const path = require('path');
+const express = require('express');
+const compression = require('compression');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const serverConfig = require('../server-config.json');
+const controllers = require('./controllers');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 process.env.ROOT = path.join('.');
@@ -24,4 +24,4 @@ app.use(cors(corsConfig));
 
 app.use(controllers());
 
-export default app;
+module.exports = app;

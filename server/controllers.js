@@ -1,9 +1,9 @@
-import express from 'express';
-import configController from './config-controller/config-controller';
-import proxyController from './proxy-controller/proxy-controller';
-import serverConfig from '../server-config.json';
+const express = require('express');
+const configController = require('./config-controller/config-controller');
+const proxyController = require('./proxy-controller/proxy-controller');
+const serverConfig = require('../server-config.json');
 
-export default () => {
+module.exports = () => {
   const router = new express.Router();
 
   if (serverConfig.configUI.enabled) {

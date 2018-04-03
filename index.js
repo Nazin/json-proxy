@@ -1,9 +1,9 @@
-import path from 'path';
-import spdy from 'spdy';
-import http from 'http';
-import fs from 'fs';
-import Server from './server/server';
-import defaultServerConfig from './server-config.json';
+const path = require('path');
+const spdy = require('spdy');
+const http = require('http');
+const fs = require('fs');
+const Server = require('./server/server');
+const defaultServerConfig = require('./server-config.json');
 
 class JsonProxy {
 

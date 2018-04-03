@@ -1,6 +1,6 @@
-import adjustBody from './adjustBody';
+const adjustBody = require('./adjustBody');
 
-export default function adjustResponse({
+module.exports = function adjustResponse({
   response, requestBody, rules, endpointName,
 }) {
   let responseBody;
@@ -29,4 +29,4 @@ export default function adjustResponse({
     responseHeaders,
     responseBody,
   };
-}
+};

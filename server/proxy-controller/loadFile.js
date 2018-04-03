@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-export default function loadFromFile(filePath) {
+module.exports = function loadFromFile(filePath) {
   console.log('File path: ', filePath);
   let content;
   if (!filePath) {
@@ -18,4 +18,4 @@ export default function loadFromFile(filePath) {
     return content;
   }
   return JSON.parse(content);
-}
+};

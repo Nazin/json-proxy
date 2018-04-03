@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import request from 'request';
-import { Router } from 'express';
-import sendError from './sendError';
-import adjustRequest from './adjustRequest';
-import adjustResponse from './adjustResponse';
+const fs = require('fs');
+const path = require('path');
+const request = require('request');
+const express = require('express');
+const sendError = require('./sendError');
+const adjustRequest = require('./adjustRequest');
+const adjustResponse = require('./adjustResponse');
 
-export default () => {
-  const router = new Router();
+module.exports = () => {
+  const router = new express.Router();
 
   router.all('*', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
