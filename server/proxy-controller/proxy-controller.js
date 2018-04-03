@@ -5,6 +5,7 @@ const express = require('express');
 const sendError = require('./sendError');
 const adjustRequest = require('./adjustRequest');
 const adjustResponse = require('./adjustResponse');
+const configManager = require('../config-manager');
 
 module.exports = () => {
   const router = new express.Router();
@@ -12,7 +13,7 @@ module.exports = () => {
   router.all('*', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
 
-    const configuration = JSON.parse(fs.readFileSync(path.join(process.env.ROOT, 'configs', 'proxy-config.json'), 'utf8'));
+    const configuration = JSON.parse(fs.readFileSync(path.join(process.env.ROOT, 'configs', configManager.getSelectedConfigName()), 'utf8'));
     const endpoint = (configuration.endpoints || []).find(singleEndpoint => req.url.match(new RegExp(`^/${singleEndpoint.name}/`)));
 
     if (endpoint === undefined) {

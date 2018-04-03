@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const formidable = require('formidable');
 const express = require('express');
+const _ = require('lodash');
 const isProperJSON = require('./json-validator');
 const configManager = require('../config-manager');
 
@@ -21,6 +22,15 @@ module.exports = () => {
     res.send(configSchema);
   });
 
+  router.get('/configs', (req, res) => {
+    res.status(200).send({ files: configManager.getAvailableConfigs(), selectedConfig: configManager.getSelectedConfigName() });
+  });
+
+  router.post('/configs', (req, res) => {
+    configManager.updateSelectedConfigName(req.body.selectedConfig);
+    res.send(configManager.getSelectedConfig());
+  });
+
   router.post('/', (req, res) => {
     const form = new formidable.IncomingForm();
     let success = true;
@@ -32,7 +42,7 @@ module.exports = () => {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
           if (isProperJSON(JSON.parse(newConfig), configSchema)) {
-            configManager.updateSelectedConfig(newConfig);
+            configManager.updateSelectedConfig(newConfig, file.name.includes('.json') ? _.snakeCase(file.name) : `${_.snakeCase(_.first(_.split(file.name, '.')))}.json`);
           } else {
             success = false;
           }
@@ -57,9 +67,9 @@ module.exports = () => {
     form.parse(req);
   });
 
-  router.post('/update', (req, res) => {
+  router.put('/', (req, res) => {
     if (isProperJSON(req.body, configSchema)) {
-      configManager.updateSelectedConfig(req.body);
+      configManager.updateSelectedConfig(req.body, configManager.getSelectedConfigName());
       res.send({ status: 'success' });
     } else {
       res.send({ status: 'failure' });

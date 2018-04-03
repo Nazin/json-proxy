@@ -10,6 +10,7 @@
 </head>
 <body>
   <div id="fail" style="display:none; color: red; font-weight: bold; margin-bottom: 10px;">Upload failed. Please ensure the file has correct mime type and correct JSON format.</div>
+  <select id="select-config-file"></select>
   <button id="save-configuration">Save configuration</button> <a href="config.json">Current configuration</a>
   <div id="jsoneditor" style="width: 100%; height: 600px;"></div>
   <hr>
@@ -20,7 +21,7 @@
   </form>
 
   <script>
-    // TODO some refactoring might be needed
+    // TODO some serious refactoring is needed
     document.addEventListener('DOMContentLoaded', () => {
       const params = location.search.substring(1).split('&');
       params.forEach((val) => {
@@ -31,6 +32,8 @@
       })
     });
 
+    var editor;
+
     var request = new XMLHttpRequest();
     request.open('GET', 'config.schema.json', true);
     request.onload = function() {
@@ -39,7 +42,7 @@
         var options = {
           schema: JSON.parse(request.responseText)
         };
-        var editor = new JSONEditor(container, options);
+        editor = new JSONEditor(container, options);
 
         var configRequest = new XMLHttpRequest();
         configRequest.open('GET', 'config.json', true);
@@ -56,7 +59,7 @@
         saveConfiguration.addEventListener('click', () => {
           var json = editor.get();
           var request = new XMLHttpRequest();
-          request.open('POST', 'update', true);
+          request.open('PUT', '', true);
           request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
           request.send(JSON.stringify(json));
         });
@@ -64,6 +67,34 @@
     };
 
     request.send();
+
+    var configsRequest = new XMLHttpRequest();
+    configsRequest.open('GET', 'configs', true);
+    configsRequest.onload = function() {
+      if (configsRequest.status === 200) {
+        var container = document.getElementById('select-config-file');
+        var response = JSON.parse(configsRequest.responseText);
+        response.files.forEach((fileName) => {
+          var selected = (fileName === response.selectedConfig ? ' selected' : '');
+          var option = `<option value="${fileName}"${selected}>${fileName}</option>`;
+          container.innerHTML += option;
+        });
+
+        container.addEventListener('change', () => {
+          var request = new XMLHttpRequest();
+          request.open('POST', 'configs', true);
+          request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+          request.send(JSON.stringify({selectedConfig: container.value}));
+          request.onload = function() {
+            if (request.status === 200) {
+              editor.set(JSON.parse(request.responseText));
+            }
+          }
+        });
+      }
+    };
+
+    configsRequest.send();
   </script>
 </body>
 </html>
