@@ -2,9 +2,8 @@ const express = require('express');
 const configController = require('./config-controller/config-controller');
 const proxyController = require('./proxy-controller/proxy-controller');
 const controllersManager = require('./controllers-manager');
-const serverConfig = require('../server-config.json');
 
-module.exports = () => {
+module.exports = (serverConfig) => {
   const router = new express.Router();
 
   if (serverConfig.configUI.enabled) {

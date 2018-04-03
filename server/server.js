@@ -3,13 +3,12 @@ const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const serverConfig = require('../server-config.json');
 const controllers = require('./controllers');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 process.env.ROOT = path.join('.');
 
-module.exports = () => {
+module.exports = (serverConfig) => {
   const app = express();
 
   const corsConfig = Object.assign({}, serverConfig.cors, {
@@ -23,7 +22,7 @@ module.exports = () => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cors(corsConfig));
 
-  app.use(controllers());
+  app.use(controllers(serverConfig));
 
   return app;
 };

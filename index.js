@@ -18,7 +18,7 @@ class JsonProxy {
       key: fs.readFileSync(path.resolve(this.serverConfig.https.key)),
       cert: fs.readFileSync(path.resolve(this.serverConfig.https.cert)),
     };
-    this.httpServer = this.serverConfig.https.enabled ? spdy.createServer(httpsOptions, Server()) : http.createServer(Server());
+    this.httpServer = this.serverConfig.https.enabled ? spdy.createServer(httpsOptions, Server(this.serverConfig)) : http.createServer(Server(this.serverConfig));
   }
 
   addController(path, controller) {
