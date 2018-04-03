@@ -2,7 +2,7 @@
 
 [![NPM Version][npm-image]][npm-url]
 
-[npm-image]: https://img.shields.io/npm/v/json-http-proxy.svg
+[npm-image]: https://img.shields.io/npm/v/mim-json-proxy.svg
 [npm-url]: https://www.npmjs.com/package/mim-json-proxy
 
 A tool which can be used as ‘man in the middle’ proxy. It can be used to sit between two JSON webservices endpoints (e.g. Facebook/Twitter and your application) to intercept the webservices traffic between them and modify it.
@@ -13,11 +13,11 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
     npm i mim-json-proxy
     ```
 1. In your code
-```javascript
-const JsonProxy = require('mim-json-proxy');
-const proxy = new JsonProxy(options);
-proxy.start();
-```
+    ```javascript
+    const JsonProxy = require('mim-json-proxy');
+    const proxy = new JsonProxy(options);
+    proxy.start();
+    ```
 
 ## Options
 
@@ -32,10 +32,11 @@ proxy.start();
 
 ## API
 
-- `start(options)`: starts the server
-- `addController(path, controller)`: possibility to define custom controller on the server (i.e. replacing /config)
+- `start(options)`: starts the server with provided `options`
+- `addController(path, controller)`: possibility to define custom controller on the server (i.e. replacing `/config`)
 
 ## Developer Notes
-1. You can use `npm start` to run the proxy locally
-1. Proxy runs on port 3005 by default to relay the communication to webservice. The /config endpoint can be used to adjust the configuration in simple UI
-1. config.json defines rules and endpoints
+- You can use `npm start` to run the proxy locally
+- Proxy runs on port 3005 by default to relay the communication to webservice. The `/config` endpoint can be used to adjust the configuration in simple UI
+- `configs/proxy-config.json` defines rules and endpoints
+- `proxy-config.schema.json` defines how the above file should look like

@@ -1,6 +1,6 @@
 {
   "name": "mim-json-proxy",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Man in the middle JSON proxy",
   "engines": {
     "node": ">=8.9.0",
