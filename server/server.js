@@ -9,19 +9,21 @@ const controllers = require('./controllers');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 process.env.ROOT = path.join('.');
 
-const app = express();
+module.exports = () => {
+  const app = express();
 
-const corsConfig = Object.assign({}, serverConfig.cors, {
-  origin: (ignored, callback) => callback(null, true),
-});
+  const corsConfig = Object.assign({}, serverConfig.cors, {
+    origin: (ignored, callback) => callback(null, true),
+  });
 
-app.set('trust proxy', true);
-app.use(compression());
+  app.set('trust proxy', true);
+  app.use(compression());
 
-app.use(bodyParser.json({ limit: serverConfig.bodyParserLimit }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors(corsConfig));
+  app.use(bodyParser.json({ limit: serverConfig.bodyParserLimit }));
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(cors(corsConfig));
 
-app.use(controllers());
+  app.use(controllers());
 
-module.exports = app;
+  return app;
+};
