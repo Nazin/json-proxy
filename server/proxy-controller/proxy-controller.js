@@ -35,11 +35,15 @@ module.exports = () => {
         response: { statusCode: 200 }, requestBody, rules, endpointName,
       });
 
+      if (adjustedResponse.responseBody === undefined) {
+        console.warn('Ensure your rules are setup correctly, there is no body to return.');
+      }
+
       setTimeout(() => {
         res.writeHead(adjustedResponse.responseStatusCode, adjustedResponse.responseHeaders);
-        res.write(adjustedResponse.responseBody);
+        res.write(adjustedResponse.responseBody || '{}');
         res.end();
-      }, (urlConfiguration && urlConfiguration.delay) || 0);
+      }, urlConfiguration.delay || 0);
 
       return;
     }
