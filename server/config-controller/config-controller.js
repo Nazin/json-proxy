@@ -5,11 +5,10 @@ const express = require('express');
 const _ = require('lodash');
 const isProperJSON = require('./json-validator');
 const configManager = require('../config-manager');
+const proxyConfigSchema = require('../../proxy-config.schema.json');
 
 module.exports = () => {
   const router = new express.Router();
-  const configSchemaJSONLocation = path.join(process.env.ROOT, 'proxy-config.schema.json');
-  const configSchema = JSON.parse(fs.readFileSync(configSchemaJSONLocation, 'utf8'));
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
   router.use(express.static(path.join(process.env.ROOT, 'node_modules', 'jsoneditor', 'dist')));
@@ -19,7 +18,7 @@ module.exports = () => {
   });
 
   router.get('/config.schema.json', (req, res) => {
-    res.send(configSchema);
+    res.send(proxyConfigSchema);
   });
 
   router.get('/configs', (req, res) => {
@@ -41,7 +40,7 @@ module.exports = () => {
       try {
         if (file.type === 'application/octet-stream') {
           const newConfig = fs.readFileSync(file.path, 'utf8');
-          if (isProperJSON(JSON.parse(newConfig), configSchema)) {
+          if (isProperJSON(JSON.parse(newConfig), proxyConfigSchema)) {
             configManager.updateSelectedConfig(newConfig, file.name.includes('.json') ? _.snakeCase(file.name) : `${_.snakeCase(_.first(_.split(file.name, '.')))}.json`);
           } else {
             success = false;
@@ -68,7 +67,7 @@ module.exports = () => {
   });
 
   router.put('/', (req, res) => {
-    if (isProperJSON(req.body, configSchema)) {
+    if (isProperJSON(req.body, proxyConfigSchema)) {
       configManager.updateSelectedConfig(req.body, configManager.getSelectedConfigName());
       res.send({ status: 'success' });
     } else {
