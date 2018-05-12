@@ -7,16 +7,19 @@ const proxyConfigSchema = require('../proxy-config.schema.json');
 
 module.exports = (serverConfig) => {
   const router = new express.Router();
-
-  if (serverConfig.configUI.enabled) {
-    router.use(serverConfig.configUI.endpoint, configController());
-  }
-
   const additionalControllers = controllersManager.getControllers();
+  let configEndpointPresent = false;
 
   Object.keys(additionalControllers).forEach((path) => {
     router.use(path, additionalControllers[path](configManager, proxyConfigSchema));
+    if (path === serverConfig.configUI.endpoint) {
+      configEndpointPresent = true;
+    }
   });
+
+  if (serverConfig.configUI.enabled && !configEndpointPresent) {
+    router.use(serverConfig.configUI.endpoint, configController());
+  }
 
   router.use('/favicon.ico', express.static('./public/images/favicon.ico'));
   router.use('/', proxyController());
