@@ -14,11 +14,13 @@ class JsonProxy {
   }
 
   createServer() {
+    const certificateKeyPath = path.resolve(this.serverConfig.certificates.key);
+    const certificatePath = path.resolve(this.serverConfig.certificates.cert);
     const httpsOptions = {
-      key: fs.readFileSync(path.resolve(this.serverConfig.https.key)),
-      cert: fs.readFileSync(path.resolve(this.serverConfig.https.cert)),
+      key: fs.readFileSync(fs.existsSync(certificateKeyPath) ? certificateKeyPath : path.resolve(__dirname, this.serverConfig.certificates.key)),
+      cert: fs.readFileSync(fs.existsSync(certificatePath) ? certificatePath : path.resolve(__dirname, this.serverConfig.certificates.cert))
     };
-    this.httpServer = this.serverConfig.https.enabled ? spdy.createServer(httpsOptions, Server(this.serverConfig)) : http.createServer(Server(this.serverConfig));
+    this.httpServer = this.serverConfig.https ? spdy.createServer(httpsOptions, Server(this.serverConfig)) : http.createServer(Server(this.serverConfig));
   }
 
   addController(path, controller) {
@@ -31,7 +33,7 @@ class JsonProxy {
       if (error) {
         return console.error(error);
       }
-      const protocol = this.serverConfig.https.enabled ? 'https' : 'http';
+      const protocol = this.serverConfig.https ? 'https' : 'http';
       const configurationInfo = this.serverConfig.configUI.enabled ? `Configuration UI available at ${protocol}://localhost:${process.env.PORT || this.serverConfig.port}${this.serverConfig.configUI.endpoint}.` : '';
       return console.log(`Proxy server started, listening at ${protocol}://localhost:${process.env.PORT || this.serverConfig.port}. ${configurationInfo}`);
     });

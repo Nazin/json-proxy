@@ -26,9 +26,9 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
 - `configUI.endpoint`: path for the config UI (default `/config`)
 - `bodyParserLimit`: limit for express bodyParser (default `5mb`)
 - `cors`: cors configuration to pass to express (default `{credentials: true}`)
-- `https.enabled`: whether to start server using https or not (default `false`)
-- `https.key`: HTTPS certificate key path (default `./certificates/server.key`)
-- `https.cert`: HTTPS certificate CRT path (default `./certificates/server.crt`)
+- `https`: whether to start server using https or not (default `false`)
+- `certificates.key`: HTTPS certificate key path (default `./certificates/server.key`)
+- `certificates.cert`: HTTPS certificate CRT path (default `./certificates/server.crt`)
 
 ## API
 
