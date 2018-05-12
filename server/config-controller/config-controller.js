@@ -11,7 +11,7 @@ module.exports = () => {
   const router = new express.Router();
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
-  router.use(express.static(path.join(process.env.ROOT, '..', 'jsoneditor', 'dist')));
+  router.use(express.static(path.join(process.env.ROOT, process.env.ROOT.match('node_modules') === null ? 'node_modules' : '..', 'jsoneditor', 'dist')));
 
   router.get('/config.json', (req, res) => {
     res.send(configManager.getSelectedConfig());
