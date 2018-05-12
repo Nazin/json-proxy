@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const controllers = require('./controllers');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-process.env.ROOT = path.join('.');
+process.env.ROOT = path.join(__dirname, '..');
 
 module.exports = (serverConfig) => {
   const app = express();

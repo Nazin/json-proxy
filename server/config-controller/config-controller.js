@@ -11,7 +11,7 @@ module.exports = () => {
   const router = new express.Router();
 
   router.use(express.static(path.join(process.env.ROOT, 'public')));
-  router.use(express.static(path.join(process.env.ROOT, 'node_modules', 'jsoneditor', 'dist')));
+  router.use(express.static(path.join(process.env.ROOT, '..', 'jsoneditor', 'dist')));
 
   router.get('/config.json', (req, res) => {
     res.send(configManager.getSelectedConfig());
@@ -34,7 +34,7 @@ module.exports = () => {
     const form = new formidable.IncomingForm();
     let success = true;
 
-    form.uploadDir = path.join(process.env.ROOT, '/uploads');
+    form.uploadDir = path.join(process.env.ROOT, 'uploads');
 
     form.on('file', (field, file) => {
       try {
