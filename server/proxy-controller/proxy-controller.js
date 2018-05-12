@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const request = require('request');
 const express = require('express');
 const sendError = require('./sendError');
@@ -13,7 +11,7 @@ module.exports = () => {
   router.all('*', (req, res) => {
     console.log(`Serving: ${req.method} ${req.url}`);
 
-    const configuration = JSON.parse(fs.readFileSync(path.join(process.env.ROOT, 'configs', configManager.getSelectedConfigName()), 'utf8'));
+    const configuration = configManager.getSelectedConfig();
     const endpoint = (configuration.endpoints || []).find(singleEndpoint => req.url.match(new RegExp(`^/${singleEndpoint.name}/`)));
 
     if (endpoint === undefined) {

@@ -1,5 +1,7 @@
 {
   "port": 3005,
+  "configsDirectory": "./configs",
+  "defaultConfigName": "proxy-config.json",
   "configUI": {
     "enabled": true,
     "endpoint": "/config"

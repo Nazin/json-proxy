@@ -22,6 +22,8 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
 ## Options
 
 - `port`: port to open the server on (default `3005`)
+- `configsDirectory`: defines proxy configurations directory (default `./configs`)
+- `defaultConfigName`: defines default configuration name (default `proxy-config.json`) 
 - `configUI.enabled`: whether to enable the UI for easier proxy config adjustments (default `true`)
 - `configUI.endpoint`: path for the config UI (default `/config`)
 - `bodyParserLimit`: limit for express bodyParser (default `5mb`)
