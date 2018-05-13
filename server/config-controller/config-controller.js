@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const formidable = require('formidable');
 const express = require('express');
 const _ = require('lodash');
@@ -34,7 +35,7 @@ module.exports = () => {
     const form = new formidable.IncomingForm();
     let success = true;
 
-    form.uploadDir = path.join(process.env.ROOT, 'uploads');
+    form.uploadDir = os.tmpdir();
 
     form.on('file', (field, file) => {
       try {
