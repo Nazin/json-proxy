@@ -17,7 +17,7 @@
         }
       },
       "additionalProperties": false,
-      "required": ["enabled", "url"]
+      "required": ["enabled"]
     },
     "endpoints": {
       "type": "array",
