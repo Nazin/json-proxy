@@ -4,6 +4,7 @@ const sendError = require('./sendError');
 const adjustRequest = require('./adjustRequest');
 const adjustResponse = require('./adjustResponse');
 const configManager = require('../config-manager');
+const rulesManager = require('../rules-manager');
 
 module.exports = () => {
   const router = new express.Router();
@@ -21,16 +22,20 @@ module.exports = () => {
 
     const endpointName = endpoint.name;
     const reqURL = req.url.replace(new RegExp(`^/${endpoint.name}/`), '/');
-    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && req.method === url.method && url.url.match(reqURL.split('?')[0]));
+    const reqMethod = req.method;
+    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && reqMethod === url.method && url.url.match(reqURL.split('?')[0]));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
     const requestBody = req && req.body;
     const rules = (urlConfiguration && urlConfiguration.rules) || [];
-    const newRequestBody = adjustRequest({ requestBody, rules });
+    const funcRules = rulesManager.getRulesForEndpoint(endpointName);
+    const newRequestBody = adjustRequest({
+      requestBody, rules, funcRules, reqURL, reqMethod,
+    });
 
     if (urlConfiguration && !urlConfiguration.sendRQ) {
       const adjustedResponse = adjustResponse({
-        response: { statusCode: 200 }, requestBody, rules, endpointName,
+        response: { statusCode: 200 }, requestBody, rules, endpointName, funcRules, reqURL, reqMethod,
       });
 
       if (adjustedResponse.responseBody === undefined) {
@@ -65,7 +70,7 @@ module.exports = () => {
       }
 
       const adjustedResponse = adjustResponse({
-        response, requestBody, rules, endpointName,
+        response, requestBody, rules, endpointName, funcRules, reqURL, reqMethod,
       });
 
       setTimeout(() => {

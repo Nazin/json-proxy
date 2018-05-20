@@ -28,4 +28,4 @@ class ConfigManager {
   }
 }
 
-module.exports = new ConfigManager;
+module.exports = new ConfigManager();

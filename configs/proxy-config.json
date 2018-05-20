@@ -80,7 +80,7 @@
           "sendRQ": false,
           "rules": [
             {
-              "condition": "true",
+              "condition": "isResponse",
               "actions": [
                 "responseBody = loadFromFile('data/sample.json')"
               ]

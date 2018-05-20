@@ -1,14 +1,14 @@
 const adjustBody = require('./adjustBody');
 
 module.exports = function adjustResponse({
-  response, requestBody, rules, endpointName,
+  response, requestBody, rules, endpointName, funcRules, reqURL, reqMethod,
 }) {
   let responseBody;
   let responseStatusCode = (response && response.statusCode) || 500;
   try {
     responseBody = response.body ? JSON.parse(response.body) : response.body;
     const result = adjustBody({
-      requestBody, responseBody, rules, responseStatusCode, isResponse: true,
+      requestBody, responseBody, rules, responseStatusCode, isResponse: true, funcRules, reqURL, reqMethod,
     });
     responseBody = result.responseBody;
     responseStatusCode = result.responseStatusCode;

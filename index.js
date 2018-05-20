@@ -6,17 +6,23 @@ const Server = require('./server/server');
 const defaultServerConfig = require('./server-config.json');
 const controllersManager = require('./server/controllers-manager');
 const configManager = require('./server/config-manager');
+const rulesManager = require('./server/rules-manager');
 
 class JsonProxy {
 
   constructor(serverConfig = {}) {
     this.serverConfig = Object.assign({}, defaultServerConfig, serverConfig);
     this.controllersManager = controllersManager;
+    this.rulesManager = rulesManager;
     handleProxyConfigurations.call(this);
   }
 
   addController(path, controller) {
     this.controllersManager.addController(path, controller);
+  }
+
+  addDynamicRule(endpointName, func) {
+    this.rulesManager.addRule(endpointName, func);
   }
 
   start() {

@@ -17,7 +17,7 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
 * JSON based configuration with JS defined rules for flexibility
 * JSON based configuration is backed up by [JSON schema](https://github.com/Nazin/json-proxy/blob/master/proxy-config.schema.json)
 
-## Getting Started (API)
+## Getting started (API)
 1. Install the proxy
     ```bash
     npm i mim-json-proxy
@@ -29,7 +29,7 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
     proxy.start();
     ```
 
-## Getting Started (Command line)
+## Getting started (command line)
 1. Install the proxy
     ```bash
     npm install -g mim-json-proxy
@@ -58,8 +58,9 @@ Options are for API usage and the command line:
 
 - `start(options)`: starts the server with provided `options`
 - `addController(path, controller)`: possibility to define custom controller on the server (i.e. replacing `/config`)
+- `addDynamicRule(endpointName, func)`: add dynamic rule, the `func` takes following as argument: `{ requestBody, responseStatusCode, responseBody, isResponse, isRequest, reqURL, reqMethod }`
 
-## Developer Notes
+## Developer notes
 - You can use `npm start` to run the proxy locally
 - Proxy runs on port 3005 by default to relay the communication to webservice. The `/config` endpoint can be used to adjust the configuration in simple UI
 - `configs/proxy-config.json` defines rules and endpoints
