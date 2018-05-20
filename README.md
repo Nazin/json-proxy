@@ -7,33 +7,37 @@
 
 A tool which can be used as ‘man in the middle’ proxy. It can be used to sit between two JSON webservices endpoints (e.g. Facebook/Twitter and your application) to intercept the webservices traffic between them and modify it.
 
+## Features
+
+* Possibility to mock entire response and/or request
+* Possibility to mock only part of response and/or request
+* Possibility to mock response status code
+* Simulate delays on service calls
+* Easy way to change endpoints on the fly (i.e. developer / staging)
+* JSON based configuration with JS defined rules for flexibility
+* JSON based configuration is backed up by [JSON schema](https://github.com/Nazin/json-proxy/blob/master/proxy-config.schema.json)
+
 ## Getting Started (API)
 1. Install the proxy
     ```bash
     npm i mim-json-proxy
     ```
-1. In your code
+1. In the code
     ```javascript
     const JsonProxy = require('mim-json-proxy');
     const proxy = new JsonProxy(options);
     proxy.start();
     ```
 
-## Install
-
-With npm do:
-
-```bash
-npm install -g mim-json-proxy
-```
-
-## Usage
-
-Usage:
- 
-```bash
-mim-json-proxy {OPTIONS}
-```
+## Getting Started (Command line)
+1. Install the proxy
+    ```bash
+    npm install -g mim-json-proxy
+    ```
+1. Usage:
+    ```bash
+    mim-json-proxy {OPTIONS}
+    ```
 
 ## Options
 
