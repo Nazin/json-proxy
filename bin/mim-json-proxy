@@ -1,0 +1,35 @@
+#! /usr/bin/env node
+'use strict';
+
+const program = require('commander');
+const JsonProxy = require('../');
+
+program
+  .option('-p, --port [port]', 'port to open the server on')
+  .option('-d, --configsDirectory [path]', 'defines proxy configurations directory')
+  .option('-n, --defaultConfigName [fileName]', 'defines default configuration name')
+  .option('-u, --configUI.enabled', 'whether to enable the UI for easier proxy config adjustments')
+  .option('-e, --configUI.endpoint [endpoint]', 'path for the config UI')
+  .option('-b, --bodyParserLimit [limit]', 'limit for express bodyParser')
+  .option('-s, --https', 'whether to start server using https or not')
+  .option('-ck, --certificates.key [path]', 'HTTPS certificate key path')
+  .option('-cc, --certificates.cert [path]', 'HTTPS certificate CRT path')
+  .parse(process.argv);
+
+const options = {};
+const args = ['port', 'configsDirectory', 'defaultConfigName', 'configUI.enabled', 'configUI.endpoint', 'bodyParserLimit', 'https', 'certificates.key', 'certificates.cert'];
+
+args.forEach(arg => {
+  if (program[arg]) {
+    if (arg.includes('.')) {
+      const parts = arg.split('.');
+      options[parts[0]] = options[parts[0]] || {};
+      options[parts[0]][parts[1]] = program[arg];
+    } else {
+      options[arg] = program[arg];
+    }
+  }
+});
+
+const proxy = new JsonProxy(options);
+proxy.start();

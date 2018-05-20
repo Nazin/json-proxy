@@ -7,7 +7,7 @@
 
 A tool which can be used as ‘man in the middle’ proxy. It can be used to sit between two JSON webservices endpoints (e.g. Facebook/Twitter and your application) to intercept the webservices traffic between them and modify it.
 
-## Getting Started
+## Getting Started (API)
 1. Install the proxy
     ```bash
     npm i mim-json-proxy
@@ -19,7 +19,25 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
     proxy.start();
     ```
 
+## Install
+
+With npm do:
+
+```bash
+npm install -g mim-json-proxy
+```
+
+## Usage
+
+Usage:
+ 
+```bash
+mim-json-proxy {OPTIONS}
+```
+
 ## Options
+
+Options are for API usage and the command line:
 
 - `port`: port to open the server on (default `3005`)
 - `configsDirectory`: defines proxy configurations directory (default `./configs`)
