@@ -9,7 +9,7 @@ class RulesManager {
   }
 
   getRulesForEndpoint(endpointName) {
-    return this.rules[endpointName];
+    return this.rules[endpointName] || [];
   }
 }
 
