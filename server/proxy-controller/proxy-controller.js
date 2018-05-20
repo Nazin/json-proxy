@@ -59,12 +59,12 @@ module.exports = () => {
       url: endpoint.url + reqURL,
       method: req.method,
       headers,
-      body: newRequestBody,
+      body: newRequestBody === '{}' ? undefined : newRequestBody,
       proxy,
     };
 
+    console.log('Forwarding call to', options.url);
     request(options, (error, response) => {
-      console.log('Forwarding call to ', options.url);
       if (error) {
         console.log(error);
       }
