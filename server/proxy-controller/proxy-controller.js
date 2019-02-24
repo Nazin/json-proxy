@@ -23,7 +23,7 @@ module.exports = () => {
     const endpointName = endpoint.name;
     const reqURL = req.url.replace(new RegExp(`^/${endpoint.name}/`), '/');
     const reqMethod = req.method;
-    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && reqMethod === url.method && url.url.match(reqURL.split('?')[0]));
+    const urlConfiguration = (endpoint.urls || []).find(url => url.enabled && reqMethod === url.method && reqURL.match(url.url));
     const proxy = configuration.proxy.enabled ? configuration.proxy.url : undefined;
 
     const requestBody = req && req.body;
