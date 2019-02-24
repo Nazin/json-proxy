@@ -1,0 +1,29 @@
+{
+  "proxy": {
+    "enabled": false
+  },
+  "endpoints": [
+    {
+      "url": "https://www.googleapis.com",
+      "name": "gapis",
+      "urls": [
+        {
+          "enabled": true,
+          "url": "/books/v1/volumes",
+          "method": "GET",
+          "sendRQ": true,
+          "rules": [
+            {
+              "condition": "isResponse",
+              "actions": [
+                "responseBody.items[0].volumeInfo.title = 'Test book'",
+                "responseBody.items[0].volumeInfo.industryIdentifiers[0].type = 'ISBN_XX'",
+                "delete responseBody.items[0].volumeInfo.imageLinks"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

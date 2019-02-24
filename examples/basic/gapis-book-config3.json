@@ -1,0 +1,21 @@
+{
+  "proxy": {
+    "enabled": false
+  },
+  "endpoints": [
+    {
+      "url": "https://www.googleapis.com",
+      "name": "gapis",
+      "urls": [
+        {
+          "enabled": true,
+          "url": "/books/v1/volumes",
+          "method": "GET",
+          "delay": 5000,
+          "sendRQ": true,
+          "rules": []
+        }
+      ]
+    }
+  ]
+}

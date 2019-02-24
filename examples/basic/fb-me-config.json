@@ -1,0 +1,27 @@
+{
+  "proxy": {
+    "enabled": false
+  },
+  "endpoints": [
+    {
+      "url": "https://graph.facebook.com",
+      "name": "fb",
+      "urls": [
+        {
+          "enabled": true,
+          "url": "/me",
+          "method": "GET",
+          "sendRQ": false,
+          "rules": [
+            {
+              "condition": "isResponse",
+              "actions": [
+                "responseBody = {'name': 'Test', 'id': '123456789', 'birthday': '01/02/2000', 'email': 'test@example.com'}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

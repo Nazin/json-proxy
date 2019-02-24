@@ -39,6 +39,10 @@ A tool which can be used as ‘man in the middle’ proxy. It can be used to sit
     mim-json-proxy {OPTIONS}
     ```
 
+## Examples
+
+Examples can be found in the [examples](https://github.com/Nazin/json-proxy/tree/master/examples) directory.
+
 ## Options
 
 Options are for API usage and the command line:
